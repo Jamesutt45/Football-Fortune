@@ -658,6 +658,16 @@ body.ffj-pre-game > .app{display:none!important}
   border-color:#7cb7ff;
   box-shadow:0 0 0 3px rgba(124,183,255,.16);
 }
+.ffj-password-wrap{position:relative}
+.ffj-password-wrap .ffj-input{padding-right:54px}
+.ffj-password-eye{
+  position:absolute;right:9px;top:50%;transform:translateY(-50%);
+  width:40px;height:40px;border:0;border-radius:10px;background:transparent;
+  color:#6a7f96;display:grid;place-items:center;cursor:pointer;padding:0;
+}
+.ffj-password-eye:hover,.ffj-password-eye:focus-visible{background:#eef6ff;color:#245887;outline:none}
+.ffj-password-eye svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8}
+.ffj-password-eye.active{color:#245887}
 .ffj-row{
   display:flex;
   align-items:center;
