@@ -364,6 +364,9 @@
     const modeTopbarLogo=brandLogo.cloneNode(true);
     modeTopbarLogo.alt='Football Fortune';
     q('#ffjModeTopbarLogo')?.append(modeTopbarLogo);
+    const tournamentSetupLogo=brandLogo.cloneNode(true);
+    tournamentSetupLogo.alt='Football Fortune';
+    q('#ffjTournamentSetupLogo')?.append(tournamentSetupLogo);
   }
   if(playerArtwork){
     const modePlayers=playerArtwork.cloneNode(true);
@@ -549,6 +552,250 @@
   function closeLoadGames(){
     const modal=q('#ffjLoadBackdrop');modal?.classList.add('hidden');modal?.setAttribute('aria-hidden','true');
   }
+
+  const TOURNAMENT_KEY='footballFortuneTournamentV1';
+  const TOURNAMENT_COUNTRIES=[
+    {name:'England',flag:'🇬🇧'},{name:'Scotland',flag:'🏴'},{name:'Wales',flag:'🏴'},{name:'Republic of Ireland',flag:'🇮🇪'},
+    {name:'France',flag:'🇫🇷'},{name:'Spain',flag:'🇪🇸'},{name:'Portugal',flag:'🇵🇹'},{name:'Germany',flag:'🇩🇪'},
+    {name:'Italy',flag:'🇮🇹'},{name:'Netherlands',flag:'🇳🇱'},{name:'Belgium',flag:'🇧🇪'},{name:'Croatia',flag:'🇭🇷'},
+    {name:'Denmark',flag:'🇩🇰'},{name:'Switzerland',flag:'🇨🇭'},{name:'Austria',flag:'🇦🇹'},{name:'Norway',flag:'🇳🇴'},
+    {name:'Sweden',flag:'🇸🇪'},{name:'Poland',flag:'🇵🇱'},{name:'Ukraine',flag:'🇺🇦'},{name:'Türkiye',flag:'🇹🇷'},
+    {name:'Brazil',flag:'🇧🇷'},{name:'Argentina',flag:'🇦🇷'},{name:'Uruguay',flag:'🇺🇾'},{name:'Colombia',flag:'🇨🇴'},
+    {name:'United States',flag:'🇺🇸'},{name:'Mexico',flag:'🇲🇽'},{name:'Canada',flag:'🇨🇦'},{name:'Japan',flag:'🇯🇵'},
+    {name:'South Korea',flag:'🇰🇷'},{name:'Australia',flag:'🇦🇺'},{name:'Morocco',flag:'🇲🇦'},{name:'Nigeria',flag:'🇳🇬'}
+  ];
+  let selectedTournamentSize=16;
+  let tournamentState=null;
+
+  function tournamentRoundNames(size){
+    if(size===4)return ['Semi-final','Final'];
+    if(size===8)return ['Quarter-final','Semi-final','Final'];
+    return ['Round of 16','Quarter-final','Semi-final','Final'];
+  }
+  function shuffled(items){
+    const a=[...items];
+    for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+    return a;
+  }
+  function loadTournament(){
+    try{return JSON.parse(localStorage.getItem(TOURNAMENT_KEY)||'null');}catch(e){return null;}
+  }
+  function saveTournament(){
+    if(tournamentState)localStorage.setItem(TOURNAMENT_KEY,JSON.stringify(tournamentState));
+  }
+  function showTournamentScreen(id){
+    q('#ffjModeBackdrop')?.classList.add('hidden');
+    q('#ffjTournamentSetup')?.classList.toggle('hidden',id!=='setup');
+    q('#ffjTournamentHub')?.classList.toggle('hidden',id!=='hub');
+    q('#ffjTournamentSetup')?.setAttribute('aria-hidden',id==='setup'?'false':'true');
+    q('#ffjTournamentHub')?.setAttribute('aria-hidden',id==='hub'?'false':'true');
+  }
+  function hideTournamentScreens(){
+    q('#ffjTournamentSetup')?.classList.add('hidden');
+    q('#ffjTournamentHub')?.classList.add('hidden');
+    q('#ffjTournamentSetup')?.setAttribute('aria-hidden','true');
+    q('#ffjTournamentHub')?.setAttribute('aria-hidden','true');
+  }
+  function populateTournamentCountries(){
+    const select=q('#ffjTournamentCountry');if(!select)return;
+    if(select.options.length)return;
+    TOURNAMENT_COUNTRIES.forEach(c=>{
+      const option=document.createElement('option');
+      option.value=c.name;
+      option.textContent=c.flag+'  '+c.name;
+      select.appendChild(option);
+    });
+    select.value='England';
+  }
+  function openTournamentSetup(){
+    closeAllMenus?.();
+    populateTournamentCountries();
+    showTournamentScreen('setup');
+  }
+  function createTournament(){
+    const countryName=q('#ffjTournamentCountry')?.value||'England';
+    const userCountry=TOURNAMENT_COUNTRIES.find(c=>c.name===countryName)||TOURNAMENT_COUNTRIES[0];
+    const others=shuffled(TOURNAMENT_COUNTRIES.filter(c=>c.name!==userCountry.name)).slice(0,selectedTournamentSize-1);
+    const teams=shuffled([userCountry,...others]);
+    tournamentState={
+      id:'tournament_'+Date.now(),
+      competition:'Fortune Nations Cup',
+      size:selectedTournamentSize,
+      userCountry:userCountry.name,
+      createdAt:new Date().toISOString(),
+      currentRound:0,
+      teams,
+      rounds:[],
+      stats:{goals:[],assists:[]}
+    };
+    const roundNames=tournamentRoundNames(selectedTournamentSize);
+    let teamSlots=teams.map(t=>({...t}));
+    roundNames.forEach((roundName,roundIndex)=>{
+      const matchCount=selectedTournamentSize/Math.pow(2,roundIndex+1);
+      const matches=[];
+      for(let i=0;i<matchCount;i++){
+        matches.push({
+          id:'r'+roundIndex+'m'+i,
+          round:roundName,
+          home:roundIndex===0?teamSlots[i*2]:null,
+          away:roundIndex===0?teamSlots[i*2+1]:null,
+          winner:null,
+          score:null
+        });
+      }
+      tournamentState.rounds.push({name:roundName,matches});
+    });
+    saveTournament();
+    renderTournament();
+    showTournamentScreen('hub');
+  }
+  function countryByName(name){
+    return TOURNAMENT_COUNTRIES.find(c=>c.name===name)||{name:name||'TBC',flag:'⚪'};
+  }
+  function teamRow(team,emptyLabel='Winner TBC'){
+    if(!team)return '<div class="ffj-bracket-team empty"><span class="ffj-flag">○</span><span>'+emptyLabel+'</span></div>';
+    return '<div class="ffj-bracket-team"><span class="ffj-flag">'+team.flag+'</span><span>'+team.name+'</span></div>';
+  }
+  function sideRoundMatchIndexes(roundIndex,side){
+    const matches=tournamentState.rounds[roundIndex].matches;
+    const half=Math.ceil(matches.length/2);
+    return side==='left'
+      ? matches.slice(0,half).map((m,i)=>({m,index:i}))
+      : matches.slice(half).map((m,i)=>({m,index:i+half}));
+  }
+  function renderBracketRound(roundIndex,side,colIndex){
+    const round=tournamentState.rounds[roundIndex];
+    const entries=sideRoundMatchIndexes(roundIndex,side);
+    const div=document.createElement('div');
+    div.className='ffj-bracket-round';
+    div.dataset.side=side;
+    div.dataset.round=String(roundIndex);
+    div.style.gridColumn=String(colIndex);
+    div.innerHTML='<div class="ffj-bracket-round-title">'+round.name+'</div><div class="ffj-bracket-match-stack"></div>';
+    const stack=div.querySelector('.ffj-bracket-match-stack');
+    entries.forEach(({m,index})=>{
+      const card=document.createElement('div');
+      const userPath=[m.home?.name,m.away?.name,m.winner?.name].includes(tournamentState.userCountry);
+      card.className='ffj-bracket-match'+(userPath?' user-path':'');
+      card.dataset.matchId=m.id;
+      card.dataset.round=String(roundIndex);
+      card.dataset.matchIndex=String(index);
+      card.dataset.side=side;
+      card.innerHTML=teamRow(m.home)+teamRow(m.away);
+      stack.appendChild(card);
+    });
+    return div;
+  }
+  function renderTournament(){
+    if(!tournamentState)return;
+    const rounds=tournamentState.rounds;
+    const roundNames=tournamentRoundNames(tournamentState.size);
+    const title=q('#ffjTournamentTitle');
+    if(title)title.textContent='Tournament · '+roundNames[tournamentState.currentRound];
+    q('#ffjTournamentHeading').textContent=tournamentState.competition;
+    q('#ffjTournamentSummaryText').textContent=tournamentState.size+' countries · '+roundNames[0]+' to Final · Single elimination';
+    const user=countryByName(tournamentState.userCountry);
+    q('#ffjUserCountryChip').innerHTML='<span class="ffj-flag">'+user.flag+'</span><span>'+user.name+'</span>';
+
+    const grid=q('#ffjBracketGrid');if(!grid)return;
+    grid.innerHTML='';
+    const sideRounds=rounds.length-1;
+    const colCount=sideRounds*2+1;
+    grid.style.setProperty('--bracket-cols',String(colCount));
+
+    for(let r=0;r<sideRounds;r++){
+      grid.appendChild(renderBracketRound(r,'left',r+1));
+      grid.appendChild(renderBracketRound(r,'right',colCount-r));
+    }
+
+    const finalRound=rounds[rounds.length-1];
+    const final=finalRound.matches[0];
+    const finalCol=document.createElement('div');
+    finalCol.className='ffj-bracket-round ffj-bracket-final';
+    finalCol.style.gridColumn=String(sideRounds+1);
+    finalCol.dataset.side='final';
+    finalCol.dataset.round=String(rounds.length-1);
+    finalCol.innerHTML='<div class="ffj-bracket-round-title">Final</div><div class="ffj-bracket-match-stack"><div class="ffj-final-trophy">🏆</div><div class="ffj-bracket-match'+(([final.home?.name,final.away?.name,final.winner?.name].includes(tournamentState.userCountry))?' user-path':'')+'" data-match-id="'+final.id+'" data-round="'+(rounds.length-1)+'" data-match-index="0" data-side="final">'+teamRow(final.home,'Left finalist')+teamRow(final.away,'Right finalist')+'</div><div class="ffj-final-label">Champion</div></div>';
+    grid.appendChild(finalCol);
+
+    requestAnimationFrame(()=>requestAnimationFrame(drawTournamentLines));
+  }
+  function drawTournamentLines(){
+    const bracket=q('#ffjBracket'),svg=q('#ffjBracketLines');if(!bracket||!svg||!tournamentState)return;
+    const br=bracket.getBoundingClientRect();
+    svg.innerHTML='';
+    svg.setAttribute('viewBox','0 0 '+Math.max(1,br.width-40)+' '+Math.max(1,br.height-40));
+    const cards=[...bracket.querySelectorAll('.ffj-bracket-match')];
+    const byId=new Map(cards.map(el=>[el.dataset.matchId,el]));
+    const sideRounds=tournamentState.rounds.length-1;
+    const makePath=(source,dest,side)=>{
+      if(!source||!dest)return;
+      const s=source.getBoundingClientRect(),d=dest.getBoundingClientRect();
+      const base=svg.getBoundingClientRect();
+      const sx=side==='right'?s.left-base.left:s.right-base.left;
+      const sy=s.top-base.top+s.height/2;
+      const dx=side==='right'?d.right-base.left:d.left-base.left;
+      const dy=d.top-base.top+d.height/2;
+      const mid=(sx+dx)/2;
+      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('d','M '+sx+' '+sy+' H '+mid+' V '+dy+' H '+dx);
+      svg.appendChild(path);
+    };
+    for(let r=0;r<sideRounds-1;r++){
+      ['left','right'].forEach(side=>{
+        const sourceEntries=sideRoundMatchIndexes(r,side);
+        const destEntries=sideRoundMatchIndexes(r+1,side);
+        sourceEntries.forEach(({m},i)=>{
+          const dest=destEntries[Math.floor(i/2)]?.m;
+          if(dest)makePath(byId.get(m.id),byId.get(dest.id),side);
+        });
+      });
+    }
+    if(sideRounds>0){
+      const lastSideRound=sideRounds-1;
+      const final=tournamentState.rounds[tournamentState.rounds.length-1].matches[0];
+      ['left','right'].forEach(side=>{
+        const source=sideRoundMatchIndexes(lastSideRound,side)[0]?.m;
+        if(source)makePath(byId.get(source.id),byId.get(final.id),side);
+      });
+    }
+  }
+  function showTournamentPanel(panel){
+    const map={
+      bracket:['ffjTournamentBracketPanel','ffjTournamentBracketBtn'],
+      scorers:['ffjTournamentScorersPanel','ffjTournamentScorersBtn'],
+      assists:['ffjTournamentAssistsPanel','ffjTournamentAssistsBtn']
+    };
+    Object.values(map).forEach(([panelId,btnId])=>{
+      q('#'+panelId)?.classList.toggle('active',panelId===map[panel][0]);
+      q('#'+btnId)?.classList.toggle('active',btnId===map[panel][1]);
+    });
+    if(panel==='bracket')requestAnimationFrame(()=>requestAnimationFrame(drawTournamentLines));
+  }
+
+  q('#ffjTournamentBtn')?.addEventListener('click',openTournamentSetup);
+  q('#ffjTournamentBackBtn')?.addEventListener('click',()=>{
+    hideTournamentScreens();
+    q('#ffjModeBackdrop')?.classList.remove('hidden');
+  });
+  document.querySelectorAll('[data-tournament-size]').forEach(btn=>btn.addEventListener('click',()=>{
+    selectedTournamentSize=Number(btn.dataset.tournamentSize)||16;
+    document.querySelectorAll('[data-tournament-size]').forEach(x=>{
+      const selected=x===btn;
+      x.classList.toggle('selected',selected);
+      x.setAttribute('aria-pressed',selected?'true':'false');
+    });
+  }));
+  q('#ffjGenerateTournamentBtn')?.addEventListener('click',createTournament);
+  q('#ffjTournamentBracketBtn')?.addEventListener('click',()=>showTournamentPanel('bracket'));
+  q('#ffjTournamentScorersBtn')?.addEventListener('click',()=>showTournamentPanel('scorers'));
+  q('#ffjTournamentAssistsBtn')?.addEventListener('click',()=>showTournamentPanel('assists'));
+  q('#ffjTournamentNewDrawBtn')?.addEventListener('click',()=>{closeAllMenus?.();openTournamentSetup();});
+  window.addEventListener('resize',()=>{if(!q('#ffjTournamentHub')?.classList.contains('hidden'))drawTournamentLines();});
+
+  const existingTournament=loadTournament();
+  if(existingTournament)tournamentState=existingTournament;
+
   // Always begin on Log In after a fresh open or browser refresh.
   // Remembered details may be prefilled, but navigation never skips authentication.
   const rememberedLogin=loadRememberedLogin();
@@ -568,6 +815,10 @@
   const landingMenuPanel=q('#ffjLandingMenuPanel');
   const menuBtn=q('#ffMenuBtn');
   const menuPanel=q('#ffMenuPanel');
+  const tournamentSetupMenuBtn=q('#ffjTournamentSetupMenuBtn');
+  const tournamentSetupMenu=q('#ffjTournamentSetupMenu');
+  const tournamentMenuBtn=q('#ffjTournamentMenuBtn');
+  const tournamentMenu=q('#ffjTournamentMenu');
 
   function closeModeMenu(){
     modeMenuPanel?.classList.add('hidden');
@@ -584,10 +835,22 @@
     menuPanel?.setAttribute('aria-hidden','true');
     menuBtn?.setAttribute('aria-expanded','false');
   }
+  function closeTournamentSetupMenu(){
+    tournamentSetupMenu?.classList.add('hidden');
+    tournamentSetupMenu?.setAttribute('aria-hidden','true');
+    tournamentSetupMenuBtn?.setAttribute('aria-expanded','false');
+  }
+  function closeTournamentMenu(){
+    tournamentMenu?.classList.add('hidden');
+    tournamentMenu?.setAttribute('aria-hidden','true');
+    tournamentMenuBtn?.setAttribute('aria-expanded','false');
+  }
   function closeAllMenus(){
     closeModeMenu();
     closeLandingMenu();
     closeMatchMenu();
+    closeTournamentSetupMenu();
+    closeTournamentMenu();
   }
   function openModeSelect(){
     closeAllMenus();
@@ -602,6 +865,7 @@
   function goHome(){
     window.FOOTBALL_FORTUNE_AUTOSAVE_NOW?.();
     closeAllMenus();
+    hideTournamentScreens();
     modeBackdrop?.classList.add('hidden');
     shell?.classList.remove('hidden');
     document.body.classList.add('ffj-pre-game');
@@ -610,6 +874,7 @@
   function logoutToLogin(){
     window.FOOTBALL_FORTUNE_AUTOSAVE_NOW?.();
     closeAllMenus();
+    hideTournamentScreens();
     modeBackdrop?.classList.add('hidden');
     shell?.classList.remove('hidden');
     document.body.classList.add('ffj-pre-game');
@@ -672,6 +937,33 @@
     logoutToLogin();
   });
 
+  // Tournament shell controls.
+  q('#ffjTournamentSetupHomeBtn')?.addEventListener('click',goHome);
+  q('#ffjTournamentHomeBtn')?.addEventListener('click',goHome);
+  q('#ffjTournamentSetupLogoutBtn')?.addEventListener('click',logoutToLogin);
+  q('#ffjTournamentLogoutBtn')?.addEventListener('click',logoutToLogin);
+
+  tournamentSetupMenuBtn?.addEventListener('click',(e)=>{
+    e.preventDefault();e.stopPropagation();
+    const opening=tournamentSetupMenu?.classList.contains('hidden');
+    closeAllMenus();
+    if(opening){
+      tournamentSetupMenu?.classList.remove('hidden');
+      tournamentSetupMenu?.setAttribute('aria-hidden','false');
+      tournamentSetupMenuBtn.setAttribute('aria-expanded','true');
+    }
+  });
+  tournamentMenuBtn?.addEventListener('click',(e)=>{
+    e.preventDefault();e.stopPropagation();
+    const opening=tournamentMenu?.classList.contains('hidden');
+    closeAllMenus();
+    if(opening){
+      tournamentMenu?.classList.remove('hidden');
+      tournamentMenu?.setAttribute('aria-hidden','false');
+      tournamentMenuBtn.setAttribute('aria-expanded','true');
+    }
+  });
+
   // Mode-screen shell controls.
   q('#ffjModeHomeBtn')?.addEventListener('click',(e)=>{
     e.preventDefault();
@@ -731,6 +1023,8 @@
     if(!e.target.closest('#ffjLandingMenuPanel') && !e.target.closest('#ffjLandingMenuBtn')) closeLandingMenu();
     if(!e.target.closest('#ffjModeMenuPanel') && !e.target.closest('#ffjModeMenuBtn')) closeModeMenu();
     if(!e.target.closest('#ffMenuPanel') && !e.target.closest('#ffMenuBtn')) closeMatchMenu();
+    if(!e.target.closest('#ffjTournamentSetupMenu') && !e.target.closest('#ffjTournamentSetupMenuBtn')) closeTournamentSetupMenu();
+    if(!e.target.closest('#ffjTournamentMenu') && !e.target.closest('#ffjTournamentMenuBtn')) closeTournamentMenu();
   });
 })();
 </script>
