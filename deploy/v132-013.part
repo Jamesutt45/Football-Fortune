@@ -12,7 +12,7 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
             <h1>Welcome back</h1>
             <p class="ffj-lead">Log in to continue your Football Fortune journey.</p>
             <div class="ffj-field"><label>Email address</label><input class="ffj-input" id="ffjLoginEmail" type="email" placeholder="name@example.com"></div>
-            <div class="ffj-field"><label>Password</label><input class="ffj-input" id="ffjLoginPassword" type="password" placeholder="Your password"></div>
+            <div class="ffj-field"><label>Password</label><div class="ffj-password-wrap"><input class="ffj-input" id="ffjLoginPassword" type="password" placeholder="Your password"><button class="ffj-password-eye" data-password-target="ffjLoginPassword" type="button" aria-label="Show password" title="Show password"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6S2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.7"/></svg></button></div></div>
             <div class="ffj-row">
               <label class="ffj-check"><input id="ffjRememberMe" type="checkbox" checked> Remember me</label>
               <button class="ffj-link" id="ffjForgotBtn" type="button">Forgot password?</button>
@@ -28,7 +28,7 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
             <div class="ffj-field"><label>First name</label><input class="ffj-input" id="ffjSignupFirstName" type="text" autocomplete="given-name" placeholder="e.g. Freddie"></div>
             <div class="ffj-field"><label>Surname</label><input class="ffj-input" id="ffjSignupSurname" type="text" autocomplete="family-name" placeholder="e.g. Uttley"></div>
             <div class="ffj-field"><label>Email address</label><input class="ffj-input" id="ffjSignupEmail" type="email" autocomplete="email" placeholder="name@example.com"></div>
-            <div class="ffj-field"><label>Password</label><input class="ffj-input" id="ffjSignupPassword" type="password" autocomplete="new-password" placeholder="At least 8 characters"></div>
+            <div class="ffj-field"><label>Password</label><div class="ffj-password-wrap"><input class="ffj-input" id="ffjSignupPassword" type="password" autocomplete="new-password" placeholder="At least 8 characters"><button class="ffj-password-eye" data-password-target="ffjSignupPassword" type="button" aria-label="Show password" title="Show password"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6S2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.7"/></svg></button></div></div>
             <div class="ffj-field">
               <label>Player gender</label>
               <div class="ffj-character-row">
