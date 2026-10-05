@@ -257,11 +257,13 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
           <div class="ffj-tournament-field-head">
             <div><strong id="ffjTournamentTeamLabel">Your nation</strong><span id="ffjTournamentTeamHelp">Choose the nation you will manage throughout the tournament.</span></div>
           </div>
-          <label class="ffj-country-select-wrap">
-            <span class="sr-only" id="ffjTournamentTeamSr">Choose your team</span>
+          <div class="ffj-team-picker">
             <span class="ffj-team-select-badge" id="ffjTournamentSelectedBadge" aria-hidden="true"></span>
-            <select id="ffjTournamentCountry" class="ffj-country-select" aria-labelledby="ffjTournamentTeamLabel"></select>
-          </label>
+            <div class="ffj-team-picker-main">
+              <span class="ffj-team-picker-label" id="ffjTournamentPickerLabel">Selected nation</span>
+              <select id="ffjTournamentCountry" class="ffj-country-select" aria-labelledby="ffjTournamentTeamLabel ffjTournamentPickerLabel"></select>
+            </div>
+          </div>
         </section>
 
         <section class="ffj-tournament-field">
