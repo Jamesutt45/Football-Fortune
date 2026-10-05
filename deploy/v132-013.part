@@ -109,7 +109,7 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
 
   <div class="ffj-mode-backdrop hidden" id="ffjModeBackdrop">
     <header class="ff-appbar">
-      <div class="ff-appbar-title">New Game</div>
+      <div class="ff-appbar-title" id="ffjModeTopbarLogo" aria-label="Football Fortune"></div>
       <div class="ff-appbar-actions">
         <div class="ff-menu-wrap">
           <button class="ff-menu-btn" id="ffjModeMenuBtn" type="button" aria-expanded="false" aria-controls="ffjModeMenuPanel">☰ Menu</button>
@@ -160,10 +160,6 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
       </main>
       <aside class="ffj-mode-visual" aria-label="Football Fortune players">
         <button class="ffj-close ffj-mode-close-floating" id="ffjModeClose" type="button" aria-label="Close">×</button>
-        <div class="ffj-mode-visual-copy">
-          <strong>Your next football story starts here.</strong>
-          <span>Pick a mode, step onto the pitch and let every roll shape the match.</span>
-        </div>
         <div class="ffj-mode-art" id="ffjModeArt"></div>
       </aside>
     </div>
