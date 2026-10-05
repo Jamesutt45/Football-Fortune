@@ -916,6 +916,25 @@ body.ffj-pre-game > .app{display:none!important}
   background:rgba(8,25,38,.62);backdrop-filter:blur(8px)
 }
 .ffj-mode-backdrop.hidden{display:none}
+/* Use the same fixed shell app bar on mode selection as the live pitch. */
+#ffjModeBackdrop > .ff-appbar{
+  position:relative;
+  inset:auto;
+  width:100%;
+  height:70px;
+  flex:0 0 70px;
+  padding:0 18px 0 20px;
+  z-index:20;
+}
+#ffjModeBackdrop .ff-appbar-actions{gap:8px}
+#ffjModeBackdrop .ff-menu-panel{z-index:20030!important}
+#ffjModeBackdrop .ff-home-btn{
+  display:grid;
+  place-items:center;
+}
+
+.ffj-mode-topbar,.ffj-mode-brand,.ffj-mode-top-actions{display:none!important}
+
 .ffj-mode-card{
   width:min(720px,100%);padding:28px;border-radius:26px;background:#fff;
   box-shadow:0 30px 90px rgba(0,0,0,.36)
