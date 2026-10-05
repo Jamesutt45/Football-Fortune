@@ -43,7 +43,7 @@ LdsuI+MtnU/qkf4wJ3Np2Z8nPWYMADBnUCjBxNutsj5A+CJ8zpQBBgqfnX0OWi9TuFug3TYi4jRsCY6G
     hideShootoutTransition();
     document.body.classList.remove('ff-result-open');
     state.finished=false;state.phase='shootout';state.pending=null;
-    state.shootout={current:'blue',choice:null,computer:null,successNumbers:[],keeperRight:false,keeperVisual:'centre',goals:{blue:0,red:0},kicks:{blue:[],red:[]},winner:null};
+    state.shootout={current:'blue',choice:null,computer:null,successNumbers:[],keeperRight:false,keeperVisual:'centre',goals:{blue:0,red:0},kicks:{blue:[],red:[]},winner:null};ffScheduleAutosave('shootout-start');
     $('#ffGameModal').classList.add('hidden');$('#ffGameModal').setAttribute('aria-hidden','true');
     $('.pitch-stage')?.classList.add('hidden');
     const host=$('#ffIntegratedPenalty');host?.classList.remove('hidden');host?.setAttribute('aria-hidden','false');
@@ -69,10 +69,10 @@ LdsuI+MtnU/qkf4wJ3Np2Z8nPWYMADBnUCjBxNutsj5A+CJ8zpQBBgqfnX0OWi9TuFug3TYi4jRsCY6G
   }
   function prepareNextShootoutKick(){
     const so=state.shootout;if(!so||so.winner)return;
-    so.current=other(so.current);so.choice=null;so.computer=null;so.successNumbers=[];so.keeperRight=false;ffPenaltySetScene('centre');ffPenaltySetBall(null);updateShootoutUI();
+    so.current=other(so.current);so.choice=null;so.computer=null;so.successNumbers=[];so.keeperRight=false;ffPenaltySetScene('centre');ffPenaltySetBall(null);updateShootoutUI();ffScheduleAutosave('penalty-complete');
   }
   function finishShootout(winner){
-    const so=state.shootout;if(!so)return;so.winner=winner;state.finished=true;state.phase='finished';
+    const so=state.shootout;if(!so)return;so.winner=winner;state.finished=true;state.phase='finished';ffScheduleAutosave('shootout-finished');
     const loser=other(winner),penScore=`${so.goals[winner]}–${so.goals[loser]}`;
     report(winner,'SHOOTOUT WINNERS',`${teamName(winner)} win ${penScore} on penalties!`,'🏆',95);updateStandardDiceAvailability();
     const delay=state.quickSimulating?180:950;
@@ -125,10 +125,11 @@ LdsuI+MtnU/qkf4wJ3Np2Z8nPWYMADBnUCjBxNutsj5A+CJ8zpQBBgqfnX0OWi9TuFug3TYi4jRsCY6G
     state.current=other(state.current);
     placeTokens();
     setModal('YOUR TURN',`${state.current==='blue'?'Blue':'Red'} team to roll`,'','ROLL DICE');
+    ffScheduleAutosave('turn-complete');
   }
   function reachedFullTime(player){
     if(state.finalTurnFor){ return endMatch(); }
-    const opponent=other(player); if(state.pos[opponent]>=ROUTE.length-1)return endMatch(); state.finalTurnFor=opponent; report(null,'ALMOST FULL TIME',finalChanceCommentary(opponent),'⏳',95); state.current=opponent;state.phase='move';setModal('FINAL ROLL',`${teamName(opponent)} have one last roll`,'','ROLL DICE');placeTokens();
+    const opponent=other(player); if(state.pos[opponent]>=ROUTE.length-1)return endMatch(); state.finalTurnFor=opponent; report(null,'ALMOST FULL TIME',finalChanceCommentary(opponent),'⏳',95); state.current=opponent;state.phase='move';setModal('FINAL ROLL',`${teamName(opponent)} have one last roll`,'','ROLL DICE');placeTokens();ffScheduleAutosave('final-roll');
   }
   function endMatch(){
     const drawn=state.score.blue===state.score.red;
@@ -140,10 +141,12 @@ LdsuI+MtnU/qkf4wJ3Np2Z8nPWYMADBnUCjBxNutsj5A+CJ8zpQBBgqfnX0OWi9TuFug3TYi4jRsCY6G
     if(drawn&&drawNeedsShootout()){
       state.finished=false;state.phase='pre-shootout';
       showShootoutTransition();
+      ffScheduleAutosave('pre-shootout');
       return;
     }
 
     state.finished=true;state.phase='finished';
+    ffScheduleAutosave('full-time');
     if(!state.quickSimulating)setTimeout(showFinalResult,650);
   }
   async function doRoll(){
