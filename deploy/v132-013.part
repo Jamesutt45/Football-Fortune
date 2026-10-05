@@ -14,7 +14,7 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
             <div class="ffj-field"><label>Email address</label><input class="ffj-input" id="ffjLoginEmail" type="email" placeholder="name@example.com"></div>
             <div class="ffj-field"><label>Password</label><input class="ffj-input" id="ffjLoginPassword" type="password" placeholder="Your password"></div>
             <div class="ffj-row">
-              <label class="ffj-check"><input type="checkbox" checked> Remember me</label>
+              <label class="ffj-check"><input id="ffjRememberMe" type="checkbox" checked> Remember me</label>
               <button class="ffj-link" id="ffjForgotBtn" type="button">Forgot password?</button>
             </div>
             <button class="ffj-primary" id="ffjLoginBtn" type="button">LOG IN</button>
