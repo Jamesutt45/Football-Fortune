@@ -263,9 +263,9 @@
   }
   const brandLogo=q('.ffj-auth-visual .ffj-visual-logo img');
   if(brandLogo){
-    const logo=brandLogo.cloneNode(true);
-    logo.alt='Football Fortune';
-    q('.ffj-landing-logo')?.append(logo);
+    const landingTopbarLogo=brandLogo.cloneNode(true);
+    landingTopbarLogo.alt='Football Fortune';
+    q('#ffjLandingTopbarLogo')?.append(landingTopbarLogo);
     const contractLogo=brandLogo.cloneNode(true);
     contractLogo.alt='Football Fortune';
     q('.ffj-contract-logo')?.append(contractLogo);
@@ -435,6 +435,8 @@
   const modeBackdrop=q('#ffjModeBackdrop');
   const modeMenuBtn=q('#ffjModeMenuBtn');
   const modeMenuPanel=q('#ffjModeMenuPanel');
+  const landingMenuBtn=q('#ffjLandingMenuBtn');
+  const landingMenuPanel=q('#ffjLandingMenuPanel');
   const menuBtn=q('#ffMenuBtn');
   const menuPanel=q('#ffMenuPanel');
 
@@ -443,6 +445,11 @@
     modeMenuPanel?.setAttribute('aria-hidden','true');
     modeMenuBtn?.setAttribute('aria-expanded','false');
   }
+  function closeLandingMenu(){
+    landingMenuPanel?.classList.add('hidden');
+    landingMenuPanel?.setAttribute('aria-hidden','true');
+    landingMenuBtn?.setAttribute('aria-expanded','false');
+  }
   function closeMatchMenu(){
     menuPanel?.classList.add('hidden');
     menuPanel?.setAttribute('aria-hidden','true');
@@ -450,6 +457,7 @@
   }
   function closeAllMenus(){
     closeModeMenu();
+    closeLandingMenu();
     closeMatchMenu();
   }
   function openModeSelect(){
@@ -493,6 +501,33 @@
   q('#ffjLoadBtn')?.addEventListener('click',openModeSelect);
   q('#ffjFriendlyBtn')?.addEventListener('click',startFriendly);
 
+  // Welcome landing shell controls.
+  q('#ffjLandingHomeBtn')?.addEventListener('click',(e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    goHome();
+  });
+  landingMenuBtn?.addEventListener('click',(e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    const opening=landingMenuPanel?.classList.contains('hidden');
+    closeModeMenu();
+    closeLandingMenu();
+    closeMatchMenu();
+    if(opening){
+      landingMenuPanel?.classList.remove('hidden');
+      landingMenuPanel?.setAttribute('aria-hidden','false');
+      landingMenuBtn.setAttribute('aria-expanded','true');
+    }else{
+      closeLandingMenu();
+    }
+  });
+  q('#ffjLandingLogoutBtn')?.addEventListener('click',(e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    logoutToLogin();
+  });
+
   // Mode-screen shell controls.
   q('#ffjModeHomeBtn')?.addEventListener('click',(e)=>{
     e.preventDefault();
@@ -524,6 +559,7 @@
     e.stopPropagation();
     const opening=menuPanel?.classList.contains('hidden');
     closeModeMenu();
+    closeLandingMenu();
     if(opening){
       menuPanel?.classList.remove('hidden');
       menuPanel?.setAttribute('aria-hidden','false');
@@ -544,6 +580,7 @@
   });
 
   document.addEventListener('click',(e)=>{
+    if(!e.target.closest('#ffjLandingMenuPanel') && !e.target.closest('#ffjLandingMenuBtn')) closeLandingMenu();
     if(!e.target.closest('#ffjModeMenuPanel') && !e.target.closest('#ffjModeMenuBtn')) closeModeMenu();
     if(!e.target.closest('#ffMenuPanel') && !e.target.closest('#ffMenuBtn')) closeMatchMenu();
   });
