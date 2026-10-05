@@ -269,6 +269,14 @@
     const contractLogo=brandLogo.cloneNode(true);
     contractLogo.alt='Football Fortune';
     q('.ffj-contract-logo')?.append(contractLogo);
+    const modeLogo=brandLogo.cloneNode(true);
+    modeLogo.alt='Football Fortune';
+    q('#ffjModeBrand')?.append(modeLogo);
+  }
+  if(playerArtwork){
+    const modePlayers=playerArtwork.cloneNode(true);
+    modePlayers.alt='Male and female Football Fortune players';
+    q('#ffjModeArt')?.append(modePlayers);
   }
   const views=['ffjAuthView','ffjContractView','ffjLandingView'];
   const REMEMBER_KEY='footballFortuneRememberedLogin';
@@ -412,16 +420,41 @@
   });
   q('#ffjContractContinueBtn')?.addEventListener('click',showLanding);
 
-  q('#ffjNewGameBtn')?.addEventListener('click',()=>q('#ffjModeBackdrop')?.classList.remove('hidden'));
-  q('#ffjModeClose')?.addEventListener('click',()=>q('#ffjModeBackdrop')?.classList.add('hidden'));
+  const modeBackdrop=q('#ffjModeBackdrop');
+  const modeMenuBtn=q('#ffjModeMenuBtn');
+  const modeMenuPanel=q('#ffjModeMenuPanel');
+  function closeModeMenu(){
+    modeMenuPanel?.classList.add('hidden');
+    modeMenuPanel?.setAttribute('aria-hidden','true');
+    modeMenuBtn?.setAttribute('aria-expanded','false');
+  }
+  function openModeSelect(){
+    closeModeMenu();
+    modeBackdrop?.classList.remove('hidden');
+  }
+  function closeModeSelect(){
+    closeModeMenu();
+    modeBackdrop?.classList.add('hidden');
+  }
+  q('#ffjNewGameBtn')?.addEventListener('click',openModeSelect);
+  q('#ffjModeClose')?.addEventListener('click',closeModeSelect);
+  q('#ffjModeHomeBtn')?.addEventListener('click',()=>{
+    closeModeSelect();
+    showLanding();
+  });
+  q('#ffjModeMenuBtn')?.addEventListener('click',(e)=>{
+    e.stopPropagation();
+    const opening=modeMenuPanel?.classList.contains('hidden');
+    if(opening){
+      modeMenuPanel?.classList.remove('hidden');
+      modeMenuPanel?.setAttribute('aria-hidden','false');
+      modeMenuBtn?.setAttribute('aria-expanded','true');
+    }else closeModeMenu();
+  });
   q('#ffjFriendlyBtn')?.addEventListener('click',startFriendly);
 
-  q('#ffjContinueBtn')?.addEventListener('click',()=>{
-    q('#ffjModeBackdrop')?.classList.remove('hidden');
-  });
-  q('#ffjLoadBtn')?.addEventListener('click',()=>{
-    q('#ffjModeBackdrop')?.classList.remove('hidden');
-  });
+  q('#ffjContinueBtn')?.addEventListener('click',openModeSelect);
+  q('#ffjLoadBtn')?.addEventListener('click',openModeSelect);
 
   // Always begin on Log In after a fresh open or browser refresh.
   // Remembered details may be prefilled, but navigation never skips authentication.
@@ -456,10 +489,13 @@
   });
   document.addEventListener('click',(e)=>{
     if(!e.target.closest('.ff-menu-wrap')) closeMatchMenu();
+    if(!e.target.closest('.ffj-mode-menu-wrap')) closeModeMenu();
   });
 
-  q('#ffLogoutBtn')?.addEventListener('click',()=>{
+  function logoutToLogin(){
     closeMatchMenu();
+    closeModeMenu();
+    modeBackdrop?.classList.add('hidden');
     clearRememberedLogin();
     managerName='Player';
     if(q('#ffjLoginPassword'))q('#ffjLoginPassword').value='';
@@ -467,7 +503,9 @@
     if(q('#ffjRememberMe'))q('#ffjRememberMe').checked=false;
     showAuthPane('ffjLoginPane');
     showJourneyView('ffjAuthView');
-  });
+  }
+  q('#ffLogoutBtn')?.addEventListener('click',logoutToLogin);
+  q('#ffjModeLogoutBtn')?.addEventListener('click',logoutToLogin);
 
   // Existing authenticated Home control returns to the landing page.
   q('.ff-home-btn')?.addEventListener('click',(e)=>{
