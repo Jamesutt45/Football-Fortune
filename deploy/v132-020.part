@@ -269,9 +269,6 @@
     const contractLogo=brandLogo.cloneNode(true);
     contractLogo.alt='Football Fortune';
     q('.ffj-contract-logo')?.append(contractLogo);
-    const modeLogo=brandLogo.cloneNode(true);
-    modeLogo.alt='Football Fortune';
-    q('#ffjModeBrand')?.append(modeLogo);
   }
   if(playerArtwork){
     const modePlayers=playerArtwork.cloneNode(true);
