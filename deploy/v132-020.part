@@ -318,11 +318,17 @@
   function populateContract(){
     const full=playerProfile.fullName || 'Player';
     const surname=playerProfile.surname || playerProfile.firstName || full;
-    if(q('#ffjContractPlayer'))q('#ffjContractPlayer').textContent=full;
+    if(q('#ffjContractPlayer'))q('#ffjContractPlayer').textContent=full+'!';
     if(q('#ffjContractSignature'))q('#ffjContractSignature').textContent=full;
     if(q('#ffjContractHeadlineName'))q('#ffjContractHeadlineName').textContent=full;
     if(q('#ffjContractStoryName'))q('#ffjContractStoryName').textContent=full;
     if(q('#ffjContractStorySurname'))q('#ffjContractStorySurname').textContent=surname;
+    const image=q('#ffjContractSigningImage');
+    if(image){
+      const isFemale=playerProfile.gender==='female';
+      image.src=isFemale ? image.dataset.femaleSrc : image.dataset.maleSrc;
+      image.alt=(isFemale?'Female':'Male')+' Football Fortune player signing a contract';
+    }
   }
 
   function showJourneyView(id){
@@ -417,21 +423,17 @@
     q('#ffjModeBackdrop')?.classList.remove('hidden');
   });
 
-  // Restore a remembered browser session for a faster return experience.
+  // Always begin on Log In after a fresh open or browser refresh.
+  // Remembered details may be prefilled, but navigation never skips authentication.
   const rememberedLogin=loadRememberedLogin();
   const storedProfile=loadPlayerProfile();
   if(storedProfile)savePlayerProfile(storedProfile);
   if(rememberedLogin){
     if(q('#ffjLoginEmail'))q('#ffjLoginEmail').value=rememberedLogin.email;
     if(q('#ffjRememberMe'))q('#ffjRememberMe').checked=true;
-    if(storedProfile && (!storedProfile.email || storedProfile.email.toLowerCase()===rememberedLogin.email.toLowerCase())){
-      showLanding();
-    }else{
-      showJourneyView('ffjAuthView');
-    }
-  }else{
-    showJourneyView('ffjAuthView');
   }
+  showAuthPane('ffjLoginPane');
+  showJourneyView('ffjAuthView');
 
   // Match menu and logout.
   const menuBtn=q('#ffMenuBtn');
