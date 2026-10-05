@@ -357,7 +357,7 @@
     q('#ffjModeBackdrop')?.classList.add('hidden');
     shell?.classList.add('hidden');
     document.body.classList.remove('ffj-pre-game');
-    const title=q('.ff-appbar-title'); if(title)title.textContent='Friendly: Match Day';
+    const title=q('#ffMatchTitle'); if(title)title.textContent='Friendly: Match Day';
 
     // The match board is hidden while the login/landing journey is open, so its
     // route canvas initially measures at effectively 0px. Redraw it only after
