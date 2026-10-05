@@ -10,11 +10,12 @@
 <div class="loading">Loading Football Fortune…</div>
 <script>
 (async()=>{
+  const version='20261005-1732';
   const files=["deploy/v132-001.part","deploy/v132-002.part","deploy/v132-003.part","deploy/v132-004.part","deploy/v132-005.part","deploy/v132-006.part","deploy/v132-007.part","deploy/v132-008.part","deploy/v132-009.part","deploy/v132-010.part","deploy/v132-011.part","deploy/v132-012.part","deploy/v132-013.part","deploy/v132-014.part","deploy/v132-015.part","deploy/v132-016.part","deploy/v132-017.part","deploy/v132-018.part","deploy/v132-019.part","deploy/v132-020.part"];
   try{
     const parts=[];
     for(const file of files){
-      const r=await fetch(file,{cache:'no-store'});
+      const r=await fetch(file+'?v='+version,{cache:'reload'});
       if(!r.ok) throw new Error(file+' '+r.status);
       parts.push(await r.text());
     }
