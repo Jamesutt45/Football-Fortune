@@ -1825,53 +1825,72 @@ body.ffj-pre-game > .app{display:none!important}
 .ffj-club-scope{margin-top:18px;padding-top:16px;border-top:1px solid #e3eaf0}
 .ffj-club-scope.hidden{display:none}
 .ffj-tournament-subhead strong{font-size:15px}
-.ffj-country-select-wrap{display:block;margin-top:14px;position:relative}
+.ffj-team-picker{
+  display:grid;
+  grid-template-columns:54px minmax(0,1fr);
+  gap:14px;
+  align-items:center;
+  margin-top:14px;
+  padding:12px 14px;
+  border:1px solid #bfd0dd;
+  border-radius:14px;
+  background:#fff;
+  box-shadow:0 5px 14px rgba(30,65,94,.04);
+}
 .ffj-team-select-badge{
-  position:absolute;
-  left:14px;
-  top:50%;
-  transform:translateY(-50%);
-  width:30px;
-  height:22px;
+  position:static;
+  width:54px;
+  height:54px;
   display:flex;
   align-items:center;
   justify-content:center;
-  z-index:2;
   pointer-events:none;
 }
 .ffj-team-select-badge img{
-  width:30px;
-  height:20px;
+  width:42px;
+  height:28px;
   display:block;
   object-fit:cover;
-  border-radius:3px;
-  box-shadow:0 0 0 1px rgba(16,55,84,.14);
+  border-radius:4px;
+  box-shadow:0 0 0 1px rgba(16,55,84,.16),0 4px 10px rgba(16,55,84,.10);
 }
 .ffj-team-select-badge .ffj-club-badge{
-  width:28px;
-  height:28px;
-  border-radius:50%;
+  width:42px;
+  height:46px;
   display:grid;
   place-items:center;
-  background:#163c5c;
+  background:linear-gradient(180deg,#164e78,#0b3558);
   color:#fff;
-  font-size:10px;
+  font-size:11px;
   font-weight:950;
-  letter-spacing:.3px;
-  box-shadow:0 0 0 3px #e8f3fb;
+  letter-spacing:.4px;
+  clip-path:polygon(50% 0,92% 15%,86% 72%,50% 100%,14% 72%,8% 15%);
+  filter:drop-shadow(0 5px 5px rgba(16,55,84,.18));
+}
+.ffj-team-picker-main{min-width:0}
+.ffj-team-picker-label{
+  display:block;
+  margin:0 0 3px;
+  color:#738899;
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:.35px;
+  text-transform:uppercase;
 }
 .ffj-country-select{
   width:100%;
-  min-height:52px;
-  border:1px solid #bfd0dd;
-  border-radius:13px;
-  padding:0 44px 0 54px;
+  min-height:32px;
+  border:0;
+  border-radius:0;
+  padding:0 34px 0 0;
   background:#fff;
   color:#17385f;
   font:inherit;
-  font-size:16px;
-  font-weight:800;
+  font-size:17px;
+  font-weight:900;
+  outline:none;
 }
+.ffj-country-select:focus{box-shadow:none}
 .ffj-size-options{
   display:grid;
   grid-template-columns:repeat(3,1fr);
