@@ -792,6 +792,45 @@ body.ffj-pre-game > .app{display:none!important}
   object-position:center center;
   display:block;
 }
+.ffj-contract-welcome-overlay{
+  position:absolute;
+  z-index:3;
+  left:0;
+  right:0;
+  top:0;
+  min-height:210px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  padding:18px 28px 20px;
+  text-align:center;
+  background:linear-gradient(180deg,#fff 0%,#fff 82%,rgba(255,255,255,.94) 91%,rgba(255,255,255,0) 100%);
+}
+.ffj-contract-welcome-overlay .ffj-contract-hello{
+  margin:0;
+  color:#092f5c;
+  font-size:clamp(34px,3.5vw,66px);
+  font-weight:950;
+  line-height:.96;
+  letter-spacing:-.04em;
+}
+.ffj-contract-welcome-overlay .ffj-contract-hello span{
+  display:block;
+  color:#1269ed;
+  margin-top:6px;
+}
+.ffj-contract-welcome-overlay p{
+  margin:14px 0 0;
+  color:#17385f;
+  font-size:clamp(16px,1.4vw,25px);
+  font-weight:700;
+}
+@media(max-width:900px){
+  .ffj-contract-welcome-overlay{min-height:145px;padding:12px 18px 14px}
+  .ffj-contract-welcome-overlay .ffj-contract-hello{font-size:34px}
+  .ffj-contract-welcome-overlay p{font-size:15px;margin-top:9px}
+}
 .ffj-contract-news{
   min-height:100dvh;
   padding:64px 7vw 54px;
