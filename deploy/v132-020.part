@@ -66,12 +66,13 @@
   function ffWriteSaves(saves){localStorage.setItem(FF_FRIENDLY_SAVE_KEY,JSON.stringify(saves.slice(0,20)));}
   function ffNewSaveId(){return 'friendly_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);}
   function ffClone(value){return JSON.parse(JSON.stringify(value));}
+  function ffOwnerKey(){const p=managerProfile();return String(p?.email||p?.fullName||p?.surname||'player').trim().toLowerCase();}
   function ffSaveSummary(id,createdAt,updatedAt){
     return {
       id,version:1,mode:'friendly',createdAt,updatedAt,
       status:state?.finished?'finished':'in-progress',
       minute:currentMinute(),score:ffClone(state?.score||{blue:0,red:0}),
-      homeTeam:teamName('blue'),awayTeam:teamName('red'),managerSurname:managerSurname(),
+      homeTeam:teamName('blue'),awayTeam:teamName('red'),managerSurname:managerSurname(),ownerKey:ffOwnerKey(),
       state:ffClone(state),board:ffClone(window.FOOTBALL_FORTUNE_CURRENT_BOARD||[]),
       feedHTML:$('.live-report-feed')?.innerHTML||''
     };
@@ -125,7 +126,7 @@
     setModal(state.finalTurnFor?'FINAL ROLL':'YOUR TURN',state.finalTurnFor?(teamName(state.current)+' have one last roll'):((state.current==='blue'?'Blue':'Red')+' team to roll'),'','ROLL DICE');
   }
   function ffLoadSave(id){
-    const save=ffReadSaves().find(s=>s.id===id);if(!save)return false;
+    const save=ffReadSaves().find(s=>s.id===id&&(s.ownerKey||ffOwnerKey())===ffOwnerKey());if(!save)return false;
     ffSaveEnabled=true;ffActiveSaveId=save.id;
     if(typeof window.FOOTBALL_FORTUNE_LOAD_BOARD==='function')window.FOOTBALL_FORTUNE_LOAD_BOARD(save.board||[]);
     state=ffClone(save.state);state.busy=false;state.quickSimulating=false;
@@ -136,10 +137,11 @@
     requestAnimationFrame(()=>requestAnimationFrame(()=>{placeTokens();try{window.FOOTBALL_FORTUNE_DRAW_LOCKED_ROUTE?.();}catch(e){}}));
     return true;
   }
-  function ffStartNewFriendly(){ffSaveEnabled=true;ffActiveSaveId=null;resetGame();ffScheduleAutosave('kickoff');}
+  function ffStartNewFriendly(){ffSaveEnabled=true;ffActiveSaveId=null;try{window.FOOTBALL_FORTUNE_GENERATE_BOARD?.();}catch(e){}resetGame();ffScheduleAutosave('kickoff');}
 
   window.FOOTBALL_FORTUNE_SAVE_GAME=()=>{const saved=ffSaveGame('manual');if(saved)ffShowSaveToast('Friendly saved');return saved;};
-  window.FOOTBALL_FORTUNE_LIST_SAVES=()=>ffReadSaves().sort((a,b)=>new Date(b.updatedAt)-new Date(a.updatedAt));
+  window.FOOTBALL_FORTUNE_AUTOSAVE_NOW=()=>ffSaveGame('navigation');
+  window.FOOTBALL_FORTUNE_LIST_SAVES=()=>ffReadSaves().filter(s=>(s.ownerKey||ffOwnerKey())===ffOwnerKey()).sort((a,b)=>new Date(b.updatedAt)-new Date(a.updatedAt));
   window.FOOTBALL_FORTUNE_GET_RECENT_SAVE=()=>window.FOOTBALL_FORTUNE_LIST_SAVES().find(s=>s.status!=='finished')||null;
   window.FOOTBALL_FORTUNE_LOAD_SAVE=ffLoadSave;
   window.FOOTBALL_FORTUNE_DELETE_SAVE=(id)=>{const saves=ffReadSaves().filter(s=>s.id!==id);ffWriteSaves(saves);if(ffActiveSaveId===id)ffActiveSaveId=null;window.dispatchEvent(new CustomEvent('football-fortune-save-changed',{detail:{reason:'delete',id}}));};
@@ -598,6 +600,7 @@
     modeBackdrop?.classList.add('hidden');
   }
   function goHome(){
+    window.FOOTBALL_FORTUNE_AUTOSAVE_NOW?.();
     closeAllMenus();
     modeBackdrop?.classList.add('hidden');
     shell?.classList.remove('hidden');
@@ -605,6 +608,7 @@
     showLanding();
   }
   function logoutToLogin(){
+    window.FOOTBALL_FORTUNE_AUTOSAVE_NOW?.();
     closeAllMenus();
     modeBackdrop?.classList.add('hidden');
     shell?.classList.remove('hidden');
