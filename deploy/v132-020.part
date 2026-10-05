@@ -1164,6 +1164,11 @@
     e.stopPropagation();
     goHome();
   });
+  q('#ffjModeBackBtn')?.addEventListener('click',(e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    goHome();
+  });
   modeMenuBtn?.addEventListener('click',(e)=>{
     e.preventDefault();
     e.stopPropagation();
