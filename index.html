@@ -19,7 +19,7 @@
       parts.push(await r.text());
     }
     let html=parts.join('');
-    const cloudAuth='<script src="supabase-config.js"></scr'+'ipt><script src="football-fortune-auth.js"></scr'+'ipt>';
+    const cloudAuth='<script src="supabase-config.js?v=4"></scr'+'ipt><script src="football-fortune-auth.js?v=4"></scr'+'ipt>';
     if(/<\/body>/i.test(html)) html=html.replace(/<\/body>/i,cloudAuth+'</body>');
     else html+=cloudAuth;
     document.open();
