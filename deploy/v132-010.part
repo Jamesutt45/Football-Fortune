@@ -1825,13 +1825,47 @@ body.ffj-pre-game > .app{display:none!important}
 .ffj-club-scope{margin-top:18px;padding-top:16px;border-top:1px solid #e3eaf0}
 .ffj-club-scope.hidden{display:none}
 .ffj-tournament-subhead strong{font-size:15px}
-.ffj-country-select-wrap{display:block;margin-top:14px}
+.ffj-country-select-wrap{display:block;margin-top:14px;position:relative}
+.ffj-team-select-badge{
+  position:absolute;
+  left:14px;
+  top:50%;
+  transform:translateY(-50%);
+  width:30px;
+  height:22px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:2;
+  pointer-events:none;
+}
+.ffj-team-select-badge img{
+  width:30px;
+  height:20px;
+  display:block;
+  object-fit:cover;
+  border-radius:3px;
+  box-shadow:0 0 0 1px rgba(16,55,84,.14);
+}
+.ffj-team-select-badge .ffj-club-badge{
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#163c5c;
+  color:#fff;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.3px;
+  box-shadow:0 0 0 3px #e8f3fb;
+}
 .ffj-country-select{
   width:100%;
   min-height:52px;
   border:1px solid #bfd0dd;
   border-radius:13px;
-  padding:0 14px;
+  padding:0 44px 0 54px;
   background:#fff;
   color:#17385f;
   font:inherit;
