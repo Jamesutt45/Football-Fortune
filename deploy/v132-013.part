@@ -75,10 +75,34 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
   </section>
 
   <section class="ffj-view" id="ffjLandingView">
+    <header class="ff-appbar ffj-landing-appbar">
+      <div class="ff-appbar-title" id="ffjLandingTopbarLogo" aria-label="Football Fortune"></div>
+      <div class="ff-appbar-actions">
+        <div class="ff-menu-wrap">
+          <button class="ff-menu-btn" id="ffjLandingMenuBtn" type="button" aria-expanded="false" aria-controls="ffjLandingMenuPanel">☰ Menu</button>
+          <div class="ff-menu-panel hidden" id="ffjLandingMenuPanel" role="menu" aria-hidden="true">
+            <button class="ff-menu-item ff-menu-logout" id="ffjLandingLogoutBtn" type="button" role="menuitem">
+              <span class="ff-menu-item-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M10 5H6.5A2.5 2.5 0 0 0 4 7.5v9A2.5 2.5 0 0 0 6.5 19H10" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M13 8l4 4-4 4M17 12H9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <span>Log out</span>
+            </button>
+          </div>
+        </div>
+        <button class="ff-icon-btn ff-home-btn" id="ffjLandingHomeBtn" type="button" aria-label="Home" title="Home">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M3.5 10.5 12 3.5l8.5 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M5.5 9.5V20h13V9.5M9.5 20v-6h5v6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
     <div class="ffj-landing-wrap">
       <main class="ffj-landing-main">
         <div class="ffj-landing-inner">
-        <div class="ffj-landing-logo" aria-label="Football Fortune"></div>
         <div class="ffj-eyebrow">Your football story starts here</div>
         <h1 id="ffjWelcome">Welcome back!</h1>
         <p class="ffj-landing-sub">Choose how you want to continue your Football Fortune career.</p>
