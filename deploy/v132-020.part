@@ -1,0 +1,335 @@
+    const so=state.shootout;
+    if(so?.winner){
+      const winner=teamName(so.winner),loser=other(so.winner);
+      return `${winner} hold their nerve to win the shootout ${so.goals[so.winner]}–${so.goals[loser]} after regulation ended ${scoreLine()}.`;
+    }
+    const winningTeam=state.score.blue>state.score.red?'blue':'red',losingTeam=other(winningTeam),gap=Math.abs(state.score.blue-state.score.red);
+    const scorers=(state.scorers?.[winningTeam]||[]);
+    const lead=scorers.length?`${scorers[scorers.length-1].name} was among the scorers as `:'';
+    return `${lead}${teamName(winningTeam)} win ${scoreLine()}${gap>=2?', finishing the stronger side.':', edging a tight contest.'}`;
+  }
+  function showFinalResult(){
+    document.body.classList.remove('ff-result-open');
+    const wrap=$('#ffResultBackdrop');if(!wrap)return;
+    const so=state.shootout, winner=so?.winner|| (state.score.blue>state.score.red?'blue':'red');
+    const penWin=!!so?.winner;
+    $('#ffResultIcon').textContent='🏆';
+    $('#ffResultEyebrow').textContent=penWin?'PENALTY SHOOTOUT':'FULL TIME';
+    $('#ffResultTitle').textContent=`${teamName(winner)} win!`;
+    $('#ffResultScore').textContent=penWin?`${so.goals.blue}\u00a0–\u00a0${so.goals.red} PENS`:`${state.score.blue}\u00a0–\u00a0${state.score.red}`;
+    $('#ffResultCopy').textContent=finalResultBrief();
+    wrap.classList.remove('hidden');wrap.setAttribute('aria-hidden','false');
+    $('#ffGameModal')?.classList.add('hidden');$('#ffGameModal')?.setAttribute('aria-hidden','true');
+  }
+  function fitMatchSummary(){
+    const card=document.querySelector('.ff-summary-card.ff-newspaper');
+    if(!card)return;
+    card.classList.remove('ff-summary-compact','ff-summary-tight');
+    const maxH=Math.max(420,window.innerHeight-40);
+    if(card.scrollHeight>maxH)card.classList.add('ff-summary-compact');
+    if(card.scrollHeight>maxH)card.classList.add('ff-summary-tight');
+  }
+  function showMatchSummary(){
+    hideFinalResult();
+    const backdrop=$('#ffSummaryBackdrop'); if(!backdrop)return;
+    const shootoutWinner=state.shootout?.winner||null;
+    const winner=shootoutWinner?teamName(shootoutWinner):(state.score.blue===state.score.red?null:(state.score.blue>state.score.red?teamName('blue'):teamName('red')));
+    $('#ffSummaryScore').textContent=shootoutWinner?`${state.score.blue}–${state.score.red} (${state.shootout.goals.blue}–${state.shootout.goals.red} pens)`:`${state.score.blue}–${state.score.red}`;
+    $('#ffSummaryTitle').textContent=shootoutWinner?`${winner} win on penalties!`:winner?pick([`${winner} take it!`,`${winner} get the job done`,`What a match!`]):pick(['All square after a thriller','Nothing between them','What a battle!']);
+    $('#ffSummaryCopy').innerHTML=buildMatchSummary().map(p=>`<p>${p}</p>`).join('');
+    backdrop.classList.remove('hidden'); backdrop.setAttribute('aria-hidden','false');
+    document.body.classList.add('ff-summary-open');
+    requestAnimationFrame(fitMatchSummary);
+  }
+  function closeMatchSummary(){
+    const backdrop=$('#ffSummaryBackdrop');if(!backdrop)return;
+    backdrop.classList.add('hidden');
+    backdrop.setAttribute('aria-hidden','true');
+    document.body.classList.remove('ff-summary-open');
+    // Once the match summary has been shown, returning to the report should reveal
+    // the finished board/report only — there is no need to show the Full Time modal again.
+    if(state?.finished){
+      const modal=$('#ffGameModal');
+      if(modal){modal.classList.add('hidden');modal.setAttribute('aria-hidden','true');}
+      $('#ffDiceRestoreBtn')?.classList.add('hidden');
+    }
+  }
+
+  function resetGame(){
+    closeMatchSummary();
+    hideFinalResult();
+    hideShootoutTransition();
+    if(state)state.quickSimulating=false;
+    const shoot=$('#ffIntegratedPenalty');if(shoot){shoot.classList.add('hidden');shoot.setAttribute('aria-hidden','true');}$('.pitch-stage')?.classList.remove('hidden');
+    state={pos:{blue:0,red:0},score:{blue:0,red:0},scorers:{blue:[],red:[]},captains:{blue:pick([6,8,8,10]),red:pick([6,8,8,10])},current:'blue',phase:'move',pending:null,busy:false,finished:false,halfTimeCalled:false,halfTimeScore:null,finalTurnFor:null,m95Target:randomDie(),matchEvents:{yellows:{blue:0,red:0},reds:{blue:0,red:0},injuries:{blue:0,red:0}},unavailable:{blue:[],red:[]},matchFlow:{goals:0,chances:0,cards:0,reds:0,injuries:0},summaryEvents:[],shootout:null}; updateM95TargetDisplay(); updateScore();$('.half-time-score').textContent='';$('.match-minute').textContent="0'";const l=$('.live-clock');if(l)l.textContent="0'";const feed=$('.live-report-feed');if(feed)feed.innerHTML='';lastReportCommentary='';const sd=$('#ffSidebarDie');if(sd){sd.classList.remove('rolling');sd.style.transform='rotateX(-15deg) rotateY(25deg)';}placeTokens();setModal('KICK OFF','Blue team to roll','','ROLL DICE');report(null,'Kick Off',`${teamName('blue')} are the home side, so they kick us off.`,'⚽',0);
+  }
+  async function quickSimMove(player,toIndex){
+    const el=token(player);
+    const direction=toIndex>=state.pos[player]?1:-1;
+    while(state.pos[player]!==toIndex){
+      const fromIndex=state.pos[player], nextIndex=fromIndex+direction;
+      const from=ROUTE[fromIndex], to=ROUTE[nextIndex];
+      await window.FOOTBALL_FORTUNE_ROUTE.movePieceAlongRoute(el,from,to,18);
+      state.pos[player]=nextIndex;
+      placeTokens();
+      updateClock();
+      if(ROUTE[nextIndex]==='halftime'&&!state.halfTimeCalled){
+        state.halfTimeCalled=true;
+        state.halfTimeScore={...state.score};
+        $('.half-time-score').textContent=`(HT ${state.score.blue}–${state.score.red})`;
+        report(null,'HALF TIME',halfTimeCommentary(),'⏸️',45);
+        await wait(22);
+      }
+      await wait(4);
+    }
+  }
+
+  async function quickSimResolveChance(){
+    const q=state.pending, p=q.player||state.current, v=randomDie();
+    let ok=q.kind==='goal'?((v%2===1)===(q.parity==='odd')):(q.numbers||[]).includes(v);
+    await wait(22);
+    if(ok) scoreGoal(p,q.kind==='goal'?'goal':q.kind);
+    else {
+      const title=q.kind==='penalty'?'PENALTY MISSED':q.kind==='free'?'FREE KICK MISSED':'CHANCE MISSED';
+      const icon=q.kind==='penalty'?'🥅':q.kind==='free'?'🎯':'😮';
+      report(p,title,missedChanceCommentary(q.kind,p),icon);
+    }
+    await wait(22);
+    finishTurn();
+  }
+
+  async function quickSimResolveLanding(player){
+    const id=ROUTE[state.pos[player]], minute=minuteFor(id), team=teamName(player);
+    if(id==='fulltime'){reachedFullTime(player);return;}
+    if(id==='m95'){
+      const target=state.m95Target;
+      state.phase='chance'; state.pending={player,kind:'late',numbers:[target]};
+      report(player,'95TH-MINUTE DRAMA!',pick([`${team} have one last chance. A ${target} scores.`,`We're into the 95th minute — one roll, one chance. They need a ${target}.`,`Last-gasp opportunity for ${team}. They need a ${target}.`]),'⏱️');
+      await wait(14); return;
+    }
+    const ev=eventAt(id);
+    if(!ev){
+      if(id!=='halftime') report(player,`${minute}'`,quietMatchCommentary(minute),'⏱️');
+      await wait(18); finishTurn(); return;
+    }
+    if(ev.type==='open'){
+      report(player,'OPEN GOAL!',pick([`${team} have an open goal — surely this has to be finished.`,`The keeper is stranded! ${team} have the goal at their mercy.`,`What a chance for ${team} — an open goal!`]),'🥅');
+      scoreGoal(player,'goal'); await wait(25); finishTurn(); return;
+    }
+    if(ev.type==='yellow'||ev.type==='red'||ev.type==='injury'){
+      const color=ev.type==='red'?'red':ev.type==='yellow'?'yellow':'blue';
+      let title,icon,text;
+      if(ev.type==='yellow'){
+        state.matchEvents.yellows[player]++;
+        const n=shirtNumber(pick(['defender','defender','attacker']),player);
+        title='YELLOW CARD';icon='🟨';text=pick([
+          `Number ${n} goes into the book for ${team}. A late challenge — and they may be a little lucky it wasn't red.`,
+          `Yellow card for Number ${n} of ${team}. They mistimed the tackle and the referee had no hesitation.`,
+          `Number ${n} is booked for ${team}. A clumsy challenge, and they'll need to be careful from here.`
+        ]);
+      }
+      else if(ev.type==='red'){
+        state.matchEvents.reds[player]++;
+        const n=shirtNumber(pick(['defender','attacker']),player);
+        markUnavailable(player,n);
+        title='RED CARD';icon='🟥';text=pick([
+          `RED CARD! Number ${n} is sent off for ${team}. A huge moment in the match.`,
+          `Number ${n} sees red for ${team}. They're down to ten and have to regroup.`,
+          `They're off! Number ${n} is dismissed and ${team} must finish with ten players.`
+        ]);
+      }
+      else {
+        state.matchEvents.injuries[player]++;
+        const injury=resolvePlayerInjury(player,team);
+        title='INJURY';icon='🩹';text=injury.text;
+      }
+      report(player,title,text,icon); pulseDestination(ev.to,color); await wait(25);
+      const ix=ROUTE.indexOf(ev.to); if(ix>=0) await quickSimMove(player,ix);
+      await wait(20); finishTurn(); return;
+    }
+    if(ev.type==='goal-odd'||ev.type==='goal-even'){
+      const parity=ev.type==='goal-odd'?'odd':'even';
+      state.phase='chance'; state.pending={player,kind:'goal',parity};
+      report(player,'GOAL CHANCE!',pick([`${team} are in! ${parity==='odd'?'An odd number':'An even number'} will score.`,`A chance opens up for ${team}. ${parity==='odd'?'Odd':'Even'} is what they need.`,`${team} have a sight of goal. One more roll decides it.`]),'⚽');
+      await wait(14); return;
+    }
+    if(ev.type==='free'||ev.type==='penalty'){
+      state.phase='chance'; state.pending={player,kind:ev.type,numbers:ev.success||[]};
+      if(ev.type==='penalty') report(player,'PENALTY!',pick([`Penalty to ${team}! A huge chance.`,`The referee points to the spot for ${team}.`,`Big moment for ${team} — it's a penalty.`]),'🥅');
+      else report(player,'FREE KICK!',pick([`Free kick in a dangerous area for ${team}.`,`${team} have a set-piece chance here.`,`This free kick could cause trouble.`]),'🎯');
+      await wait(14); return;
+    }
+    finishTurn();
+  }
+
+  async function quickSim(){
+    if(state.busy)return;
+
+    // During a shootout, the same top-bar Quick Sim button completes penalties.
+    if(state.phase==='shootout'){
+      if(state.shootout?.winner)return;
+      state.quickSimulating=true;
+      setBusy(true);
+      const simBtn=$('#quickSimBtn');if(simBtn)simBtn.disabled=true;
+      const hint=$('#ffSidebarDiceHint');if(hint)hint.textContent='Quick sim penalties running…';
+      try{await quickSimShootout();}
+      finally{
+        state.quickSimulating=false;
+        setBusy(false);
+        if(simBtn&&!state.shootout?.winner)simBtn.disabled=false;
+        updateStandardDiceAvailability();
+      }
+      return;
+    }
+
+    // The draw hand-off requires Continue; do not skip the transition screen.
+    if(state.phase==='pre-shootout')return;
+
+    resetGame();
+    state.quickSimulating=true;
+    setBusy(true);
+    $('#ffGameModal').classList.add('hidden');
+    $('#ffGameModal').setAttribute('aria-hidden','true');
+    const simBtn=$('#quickSimBtn'); if(simBtn)simBtn.disabled=true;
+    const hint=$('#ffSidebarDiceHint'); if(hint)hint.textContent='Quick sim running…';
+    let safety=0;
+    // Regulation only: stop the instant the main match reaches the shootout hand-off.
+    while(!state.finished&&state.phase!=='pre-shootout'&&state.phase!=='shootout'&&safety++<250){
+      if(state.phase==='chance'){
+        await quickSimResolveChance();
+        continue;
+      }
+      const p=state.current, v=randomDie();
+      const target=Math.min(ROUTE.length-1,state.pos[p]+v);
+      await quickSimMove(p,target);
+      await quickSimResolveLanding(p);
+      await wait(14);
+    }
+    if(!state.finished&&state.phase!=='pre-shootout'&&state.phase!=='shootout')endMatch();
+    placeTokens(); updateClock();
+    state.quickSimulating=false;
+    setBusy(false);
+    if(simBtn)simBtn.disabled=false;
+    const liveReportFeed=$('.live-report-feed'); if(liveReportFeed)liveReportFeed.scrollTop=0;
+    await wait(125);
+
+    // A draw now pauses on the Full Time transition card until Continue is pressed.
+    if(state.phase==='pre-shootout'){
+      showShootoutTransition();
+      return;
+    }
+    if(state.phase==='shootout')return;
+
+    // Regulation produced a winner (or a mode where a draw stands): now show the summary.
+    if(state.finished)showFinalResult();
+  }
+
+  async function quickSimPenalties(){
+    if(state.busy||state.phase!=='shootout'||state.shootout?.winner)return;
+    return quickSim();
+  }
+  function install(){
+    // replace buttons to remove old prototype listeners while preserving styling
+    const oldNew=$('#restartMatchBtn'), newNew=oldNew.cloneNode(true);oldNew.replaceWith(newNew);newNew.addEventListener('click',()=>{window.FOOTBALL_FORTUNE_GENERATE_BOARD?.();setTimeout(resetGame,60);});
+    const oldSim=$('#quickSimBtn'),newSim=oldSim.cloneNode(true);oldSim.replaceWith(newSim);newSim.addEventListener('click',quickSim);
+    $('#ffRollBtn').addEventListener('click',doRoll);
+    $('#ffSidebarRollBtn').addEventListener('click',doRoll);
+    $('#ffDiceCollapseBtn').addEventListener('click',()=>{$('#ffGameModal').classList.add('hidden');$('#ffGameModal').setAttribute('aria-hidden','true');$('#ffDiceRestoreBtn').classList.remove('hidden');});
+    $('#ffDiceRestoreBtn').addEventListener('click',()=>{$('#ffDiceRestoreBtn').classList.add('hidden');$('#ffGameModal').classList.remove('hidden');$('#ffGameModal').setAttribute('aria-hidden','false');});
+    $('#ffSummaryCloseBtn')?.addEventListener('click',closeMatchSummary);
+    $('#ffResultSummaryBtn')?.addEventListener('click',showMatchSummary);
+    $('#ffResultCloseBtn')?.addEventListener('click',hideFinalResult);
+    document.querySelectorAll('[data-pen-dir]').forEach(btn=>btn.addEventListener('click',()=>chooseShootoutDirection(btn.dataset.penDir)));
+    $('#ffPenSummaryBtn')?.addEventListener('click',()=>{const host=$('#ffIntegratedPenalty');if(host){host.classList.add('hidden');host.setAttribute('aria-hidden','true');}showFinalResult();});
+    $('#ffShootoutContinueBtn')?.addEventListener('click',()=>{if(state.phase==='pre-shootout')beginShootout();});
+    updateMatchModeTitle();
+    setTimeout(resetGame,80);
+  }
+  document.addEventListener('DOMContentLoaded',install);
+})();
+</script>
+
+
+<script>
+(() => {
+  const q=s=>document.querySelector(s);
+  const shell=q('#ffJourneyShell');
+  const views=['ffjAuthView','ffjContractView','ffjLandingView'];
+  let managerName='Player';
+
+  function showJourneyView(id){
+    shell?.classList.remove('hidden');
+    document.body.classList.add('ffj-pre-game');
+    views.forEach(v=>q('#'+v)?.classList.toggle('active',v===id));
+  }
+  function showAuthPane(id){
+    ['ffjLoginPane','ffjSignupPane','ffjForgotPane'].forEach(v=>q('#'+v)?.classList.toggle('active',v===id));
+    q('#ffjLoginTab')?.classList.toggle('active',id==='ffjLoginPane');
+    q('#ffjSignupTab')?.classList.toggle('active',id==='ffjSignupPane');
+  }
+  function showLanding(){
+    q('#ffjWelcome').textContent=`Welcome, ${managerName || 'Player'}!`;
+    showJourneyView('ffjLandingView');
+  }
+  function startFriendly(){
+    q('#ffjModeBackdrop')?.classList.add('hidden');
+    shell?.classList.add('hidden');
+    document.body.classList.remove('ffj-pre-game');
+    const title=q('.ff-appbar-title'); if(title)title.textContent='Friendly: Match Day';
+    try{ if(typeof resetGame==='function')resetGame(); }catch(e){}
+  }
+
+  q('#ffjLoginTab')?.addEventListener('click',()=>showAuthPane('ffjLoginPane'));
+  q('#ffjSignupTab')?.addEventListener('click',()=>showAuthPane('ffjSignupPane'));
+  q('#ffjForgotBtn')?.addEventListener('click',()=>showAuthPane('ffjForgotPane'));
+  q('#ffjBackLoginBtn')?.addEventListener('click',()=>showAuthPane('ffjLoginPane'));
+
+  q('#ffjLoginBtn')?.addEventListener('click',()=>{
+    const email=q('#ffjLoginEmail').value.trim();
+    const pw=q('#ffjLoginPassword').value;
+    if(!email||!pw){q('#ffjLoginMessage').textContent='Enter your email address and password.';return;}
+    managerName='Player';
+    showLanding();
+  });
+
+  q('#ffjSignupBtn')?.addEventListener('click',()=>{
+    const name=q('#ffjSignupName').value.trim();
+    const email=q('#ffjSignupEmail').value.trim();
+    const pw=q('#ffjSignupPassword').value;
+    if(!name||!email||pw.length<8){q('#ffjSignupMessage').textContent='Enter your name, email and a password of at least 8 characters.';return;}
+    managerName=name;
+    q('#ffjContractName').textContent=`Welcome, ${managerName}!`;
+    showJourneyView('ffjContractView');
+  });
+  document.querySelectorAll('[data-ffj-character]').forEach(btn=>btn.addEventListener('click',()=>{
+    document.querySelectorAll('[data-ffj-character]').forEach(x=>x.classList.remove('active'));
+    btn.classList.add('active');
+  }));
+  q('#ffjResetBtn')?.addEventListener('click',()=>{
+    q('#ffjForgotMessage').textContent=q('#ffjForgotEmail').value.trim()
+      ? 'If that account exists, a reset link would be sent to it.'
+      : 'Enter your email address.';
+  });
+  q('#ffjContractContinueBtn')?.addEventListener('click',showLanding);
+
+  q('#ffjNewGameBtn')?.addEventListener('click',()=>q('#ffjModeBackdrop')?.classList.remove('hidden'));
+  q('#ffjModeClose')?.addEventListener('click',()=>q('#ffjModeBackdrop')?.classList.add('hidden'));
+  q('#ffjFriendlyBtn')?.addEventListener('click',startFriendly);
+
+  q('#ffjContinueBtn')?.addEventListener('click',()=>{
+    q('#ffjModeBackdrop')?.classList.remove('hidden');
+  });
+  q('#ffjLoadBtn')?.addEventListener('click',()=>{
+    q('#ffjModeBackdrop')?.classList.remove('hidden');
+  });
+
+  // Existing authenticated Home control returns to the landing page.
+  q('.ff-home-btn')?.addEventListener('click',(e)=>{
+    e.preventDefault();
+    showLanding();
+  });
+})();
+</script>
+
+</body>
+</html>
