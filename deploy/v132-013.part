@@ -182,11 +182,11 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
               <div class="ffj-mode-copy"><strong>Friendly</strong><p>Play a standalone match on the full dynamic Football Fortune pitch.</p></div>
               <div class="ffj-mode-cta">Play now →</div>
             </button>
-            <div class="ffj-mode disabled">
+            <button class="ffj-mode active ffj-mode-tournament" id="ffjTournamentBtn" type="button">
               <div class="ffj-mode-icon">🏆</div>
-              <div class="ffj-mode-copy"><strong>Tournament</strong><p>Battle through knockout rounds and chase the final trophy.</p></div>
-              <div class="ffj-mode-cta ffj-mode-disabled-label">Coming later</div>
-            </div>
+              <div class="ffj-mode-copy"><strong>Tournament</strong><p>Build a 4, 8 or 16-country knockout draw and chase the final trophy.</p></div>
+              <div class="ffj-mode-cta">Set up →</div>
+            </button>
             <div class="ffj-mode disabled">
               <div class="ffj-mode-icon">📈</div>
               <div class="ffj-mode-copy"><strong>League</strong><p>Build your career, earn promotion and climb through the divisions.</p></div>
@@ -200,6 +200,139 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
       </aside>
     </div>
   </div>
+</div>
+
+
+<div class="ffj-tournament-screen hidden" id="ffjTournamentSetup" aria-hidden="true">
+  <header class="ff-appbar">
+    <div class="ff-appbar-title" id="ffjTournamentSetupLogo" aria-label="Football Fortune"></div>
+    <div class="ff-appbar-actions">
+      <div class="ff-menu-wrap">
+        <button class="ff-menu-btn" id="ffjTournamentSetupMenuBtn" type="button" aria-expanded="false" aria-controls="ffjTournamentSetupMenu">☰ Menu</button>
+        <div class="ff-menu-panel hidden" id="ffjTournamentSetupMenu" role="menu" aria-hidden="true">
+          <button class="ff-menu-item ff-menu-logout" id="ffjTournamentSetupLogoutBtn" type="button" role="menuitem">
+            <span class="ff-menu-item-icon" aria-hidden="true">↪</span><span>Log out</span>
+          </button>
+        </div>
+      </div>
+      <button class="ff-icon-btn ff-home-btn" id="ffjTournamentSetupHomeBtn" type="button" aria-label="Home" title="Home">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M3.5 10.5 12 3.5l8.5 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="M5.5 9.5V20h13V9.5M9.5 20v-6h5v6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+  <div class="ffj-tournament-setup-shell">
+    <main class="ffj-tournament-setup-main">
+      <div class="ffj-tournament-setup-inner">
+        <div class="ffj-tournament-kicker">TOURNAMENT</div>
+        <h1>Create your tournament</h1>
+        <p class="ffj-tournament-intro">Choose your country and the size of the knockout draw. Every match must produce a winner.</p>
+
+        <section class="ffj-tournament-field">
+          <div class="ffj-tournament-field-head">
+            <div><strong>Choose your country</strong><span>This is the team you will manage throughout the tournament.</span></div>
+          </div>
+          <label class="ffj-country-select-wrap">
+            <span class="sr-only">Choose your country</span>
+            <select id="ffjTournamentCountry" class="ffj-country-select"></select>
+          </label>
+        </section>
+
+        <section class="ffj-tournament-field">
+          <div class="ffj-tournament-field-head">
+            <div><strong>Tournament size</strong><span>The draw automatically starts at the correct knockout round.</span></div>
+          </div>
+          <div class="ffj-size-options" role="radiogroup" aria-label="Tournament size">
+            <button class="ffj-size-option" type="button" data-tournament-size="4" aria-pressed="false">
+              <strong>4</strong><span>Semi-finals</span>
+            </button>
+            <button class="ffj-size-option" type="button" data-tournament-size="8" aria-pressed="false">
+              <strong>8</strong><span>Quarter-finals</span>
+            </button>
+            <button class="ffj-size-option selected" type="button" data-tournament-size="16" aria-pressed="true">
+              <strong>16</strong><span>Round of 16</span>
+            </button>
+          </div>
+        </section>
+
+        <div class="ffj-tournament-setup-actions">
+          <button class="ffj-secondary-action" id="ffjTournamentBackBtn" type="button">Back to modes</button>
+          <button class="ffj-primary-action" id="ffjGenerateTournamentBtn" type="button">Generate draw →</button>
+        </div>
+      </div>
+    </main>
+    <aside class="ffj-tournament-setup-side">
+      <div class="ffj-trophy-mark">🏆</div>
+      <strong>Fortune Nations Cup</strong>
+      <p>A single-elimination international tournament. Draws go to penalties and only one country can lift the trophy.</p>
+      <div class="ffj-tournament-path-preview">
+        <span>Round</span><i></i><span>Next round</span><i></i><span>Final</span>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<div class="ffj-tournament-screen hidden" id="ffjTournamentHub" aria-hidden="true">
+  <header class="ff-appbar ffj-tournament-appbar">
+    <div class="ff-appbar-title" id="ffjTournamentTitle">Tournament · Draw</div>
+    <div class="ff-appbar-actions">
+      <button class="ghost ffj-tournament-nav active" id="ffjTournamentBracketBtn" type="button">🏆 Tournament</button>
+      <button class="ghost ffj-tournament-nav" id="ffjTournamentScorersBtn" type="button">⚽ Top scorers</button>
+      <button class="ghost ffj-tournament-nav" id="ffjTournamentAssistsBtn" type="button">🎯 Top assists</button>
+      <div class="ff-menu-wrap">
+        <button class="ff-menu-btn" id="ffjTournamentMenuBtn" type="button" aria-expanded="false" aria-controls="ffjTournamentMenu">☰ Menu</button>
+        <div class="ff-menu-panel hidden" id="ffjTournamentMenu" role="menu" aria-hidden="true">
+          <button class="ff-menu-item" id="ffjTournamentNewDrawBtn" type="button" role="menuitem">
+            <span class="ff-menu-item-icon" aria-hidden="true">↻</span><span>New tournament</span>
+          </button>
+          <button class="ff-menu-item ff-menu-logout" id="ffjTournamentLogoutBtn" type="button" role="menuitem">
+            <span class="ff-menu-item-icon" aria-hidden="true">↪</span><span>Log out</span>
+          </button>
+        </div>
+      </div>
+      <button class="ff-icon-btn ff-home-btn" id="ffjTournamentHomeBtn" type="button" aria-label="Home" title="Home">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M3.5 10.5 12 3.5l8.5 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="M5.5 9.5V20h13V9.5M9.5 20v-6h5v6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="ffj-tournament-hub-main">
+    <section class="ffj-tournament-panel active" id="ffjTournamentBracketPanel">
+      <div class="ffj-tournament-summary">
+        <div>
+          <div class="ffj-tournament-kicker">FORTUNE NATIONS CUP</div>
+          <h1 id="ffjTournamentHeading">Tournament draw</h1>
+          <p id="ffjTournamentSummaryText">Your route to the final.</p>
+        </div>
+        <div class="ffj-user-country-chip" id="ffjUserCountryChip"></div>
+      </div>
+      <div class="ffj-bracket-scroll">
+        <div class="ffj-bracket" id="ffjBracket">
+          <svg class="ffj-bracket-lines" id="ffjBracketLines" aria-hidden="true"></svg>
+          <div class="ffj-bracket-grid" id="ffjBracketGrid"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ffj-tournament-panel" id="ffjTournamentScorersPanel">
+      <div class="ffj-stats-head">
+        <div><div class="ffj-tournament-kicker">TOURNAMENT STATS</div><h1>Top scorers</h1><p>Goals across every match in this tournament will appear here.</p></div>
+      </div>
+      <div class="ffj-stats-empty">⚽ <strong>No goals yet</strong><span>Player statistics will populate as tournament matches are played or simulated.</span></div>
+    </section>
+
+    <section class="ffj-tournament-panel" id="ffjTournamentAssistsPanel">
+      <div class="ffj-stats-head">
+        <div><div class="ffj-tournament-kicker">TOURNAMENT STATS</div><h1>Top assists</h1><p>Creators across every match in this tournament will appear here.</p></div>
+      </div>
+      <div class="ffj-stats-empty">🎯 <strong>No assists yet</strong><span>Assists will be tracked across the whole knockout competition.</span></div>
+    </section>
+  </main>
 </div>
 
 
