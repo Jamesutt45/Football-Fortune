@@ -48,6 +48,9 @@
     background:linear-gradient(180deg,#f9fbfd 0%, #eef3f7 100%);
     border-bottom:1px solid #aebdca;
     box-shadow:0 4px 14px rgba(23,53,82,.08);
+    overflow:visible;
+    position:relative;
+    z-index:200;
   }
   .ff-appbar-title{
     font-size:19px;
@@ -81,36 +84,70 @@
   }
   .ff-menu-wrap{
     position:relative;
+    z-index:30000;
   }
   .ff-menu-panel{
+    position:absolute!important;
+    top:calc(100% + 8px)!important;
+    right:0!important;
+    z-index:30001!important;
+    width:220px!important;
+    min-width:220px!important;
+    padding:8px!important;
+    border:1px solid #c9d7e2!important;
+    border-radius:14px!important;
+    background:#ffffff!important;
+    box-shadow:0 16px 40px rgba(20,50,78,.22)!important;
+    overflow:hidden!important;
+  }
+  .ff-menu-panel::before{
+    content:"";
     position:absolute;
-    top:48px;
-    right:0;
-    z-index:30000;
-    min-width:170px;
-    padding:8px;
-    border:1px solid #c9d7e2;
-    border-radius:12px;
+    top:-6px;
+    right:24px;
+    width:10px;
+    height:10px;
     background:#fff;
-    box-shadow:0 14px 36px rgba(22,48,72,.18);
+    border-left:1px solid #c9d7e2;
+    border-top:1px solid #c9d7e2;
+    transform:rotate(45deg);
   }
   .ff-menu-panel.hidden{display:none!important}
   .ff-menu-item{
-    width:100%;
-    min-height:42px;
-    border:0;
-    border-radius:9px;
-    background:transparent;
-    color:var(--navy);
-    padding:0 12px;
-    text-align:left;
-    font:inherit;
-    font-weight:850;
-    cursor:pointer;
+    width:100%!important;
+    min-height:48px!important;
+    display:flex!important;
+    align-items:center!important;
+    gap:11px!important;
+    border:0!important;
+    border-radius:10px!important;
+    background:transparent!important;
+    color:#17385f!important;
+    padding:0 12px!important;
+    text-align:left!important;
+    font:inherit!important;
+    font-size:14px!important;
+    font-weight:850!important;
+    cursor:pointer!important;
   }
-  .ff-menu-item:hover{background:#eef4f8}
-  .ff-menu-logout{color:#9f2d2d}
-  .ff-menu-logout:hover{background:#fff1f1}
+  .ff-menu-item:hover{background:#eef4f8!important}
+  .ff-menu-item-icon{
+    width:20px;
+    height:20px;
+    display:grid;
+    place-items:center;
+    flex:0 0 20px;
+    color:#5f7488;
+  }
+  .ff-menu-item-icon svg{
+    width:19px;
+    height:19px;
+    stroke:currentColor;
+    fill:none;
+  }
+  .ff-menu-logout{color:#9f2d2d!important}
+  .ff-menu-logout .ff-menu-item-icon{color:#9f2d2d}
+  .ff-menu-logout:hover{background:#fff1f1!important}
   .ff-home-btn{
     background:var(--navy);
     color:#fff;
