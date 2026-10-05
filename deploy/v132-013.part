@@ -25,14 +25,15 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
             <div class="ffj-eyebrow">Create account</div>
             <h1>Join Football Fortune</h1>
             <p class="ffj-lead">Start your Football Fortune career.</p>
-            <div class="ffj-field"><label>Player name</label><input class="ffj-input" id="ffjSignupName" type="text" placeholder="e.g. Sam Smith"></div>
-            <div class="ffj-field"><label>Email address</label><input class="ffj-input" id="ffjSignupEmail" type="email" placeholder="name@example.com"></div>
-            <div class="ffj-field"><label>Password</label><input class="ffj-input" id="ffjSignupPassword" type="password" placeholder="At least 8 characters"></div>
+            <div class="ffj-field"><label>First name</label><input class="ffj-input" id="ffjSignupFirstName" type="text" autocomplete="given-name" placeholder="e.g. Freddie"></div>
+            <div class="ffj-field"><label>Surname</label><input class="ffj-input" id="ffjSignupSurname" type="text" autocomplete="family-name" placeholder="e.g. Uttley"></div>
+            <div class="ffj-field"><label>Email address</label><input class="ffj-input" id="ffjSignupEmail" type="email" autocomplete="email" placeholder="name@example.com"></div>
+            <div class="ffj-field"><label>Password</label><input class="ffj-input" id="ffjSignupPassword" type="password" autocomplete="new-password" placeholder="At least 8 characters"></div>
             <div class="ffj-field">
-              <label>Player</label>
+              <label>Player gender</label>
               <div class="ffj-character-row">
-                <button class="ffj-character active" data-ffj-character="blue" type="button">MALE</button>
-                <button class="ffj-character" data-ffj-character="red" type="button">FEMALE</button>
+                <button class="ffj-character active" data-ffj-gender="male" type="button">MALE</button>
+                <button class="ffj-character" data-ffj-gender="female" type="button">FEMALE</button>
               </div>
             </div>
             <button class="ffj-primary" id="ffjSignupBtn" type="button">CREATE ACCOUNT</button>
@@ -54,12 +55,32 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
   </section>
 
   <section class="ffj-view" id="ffjContractView">
-    <div class="ffj-contract-card">
-      <div class="ffj-contract-icon">✍️</div>
-      <div class="ffj-eyebrow">Welcome to Football Fortune</div>
-      <h1 id="ffjContractName">Welcome, Player!</h1>
-      <p class="ffj-contract-copy">Your contract is signed. Your Football Fortune career starts now.</p>
-      <button class="ffj-primary" id="ffjContractContinueBtn" type="button">CONTINUE</button>
+    <div class="ffj-contract-stage">
+      <div class="ffj-contract-art">
+        <div class="ffj-contract-logo" aria-label="Football Fortune"></div>
+        <div class="ffj-contract-paper" aria-label="Signed Football Fortune player contract">
+          <div class="ffj-contract-kicker">Official player agreement</div>
+          <h2>FOOTBALL FORTUNE CONTRACT</h2>
+          <div class="ffj-contract-row"><span>Player</span><strong id="ffjContractPlayer">Player Name</strong></div>
+          <div class="ffj-contract-row"><span>Deal</span><strong>Five-year contract</strong></div>
+          <div class="ffj-contract-row"><span>Status</span><strong>Officially signed</strong></div>
+          <div class="ffj-signature">
+            <strong class="ffj-signature-name" id="ffjContractSignature">Player Name</strong>
+            <span class="ffj-signature-label">Player signature</span>
+          </div>
+          <div class="ffj-signed-stamp">SIGNED</div>
+        </div>
+        <p class="ffj-contract-art-note">The journey starts here</p>
+      </div>
+      <div class="ffj-contract-news">
+        <div class="ffj-eyebrow">Transfer news</div>
+        <h1>Football Fortune finally land <span id="ffjContractHeadlineName">Player Name</span></h1>
+        <div class="ffj-contract-news-copy">
+          <p>Football Fortune are delighted to finally get the signature of <strong id="ffjContractStoryName">Player Name</strong> on a five-year deal.</p>
+          <p>Fans are really excited to see what <strong id="ffjContractStorySurname">the new signing</strong> can achieve. Expectations are already building as a brand-new Football Fortune career gets underway.</p>
+        </div>
+        <button class="ffj-primary" id="ffjContractContinueBtn" type="button">CONTINUE</button>
+      </div>
     </div>
   </section>
 
