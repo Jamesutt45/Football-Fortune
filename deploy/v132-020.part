@@ -383,9 +383,44 @@
     showJourneyView('ffjAuthView');
   }
 
+  // Match menu and logout.
+  const menuBtn=q('#ffMenuBtn');
+  const menuPanel=q('#ffMenuPanel');
+  function closeMatchMenu(){
+    menuPanel?.classList.add('hidden');
+    menuPanel?.setAttribute('aria-hidden','true');
+    menuBtn?.setAttribute('aria-expanded','false');
+  }
+  menuBtn?.addEventListener('click',(e)=>{
+    e.stopPropagation();
+    const opening=menuPanel?.classList.contains('hidden');
+    if(opening){
+      menuPanel?.classList.remove('hidden');
+      menuPanel?.setAttribute('aria-hidden','false');
+      menuBtn.setAttribute('aria-expanded','true');
+    }else{
+      closeMatchMenu();
+    }
+  });
+  document.addEventListener('click',(e)=>{
+    if(!e.target.closest('.ff-menu-wrap')) closeMatchMenu();
+  });
+
+  q('#ffLogoutBtn')?.addEventListener('click',()=>{
+    closeMatchMenu();
+    clearRememberedLogin();
+    managerName='Player';
+    if(q('#ffjLoginPassword'))q('#ffjLoginPassword').value='';
+    if(q('#ffjLoginMessage'))q('#ffjLoginMessage').textContent='';
+    if(q('#ffjRememberMe'))q('#ffjRememberMe').checked=false;
+    showAuthPane('ffjLoginPane');
+    showJourneyView('ffjAuthView');
+  });
+
   // Existing authenticated Home control returns to the landing page.
   q('.ff-home-btn')?.addEventListener('click',(e)=>{
     e.preventDefault();
+    closeMatchMenu();
     showLanding();
   });
 })();
