@@ -266,32 +266,63 @@
     const logo=brandLogo.cloneNode(true);
     logo.alt='Football Fortune';
     q('.ffj-landing-logo')?.append(logo);
+    const contractLogo=brandLogo.cloneNode(true);
+    contractLogo.alt='Football Fortune';
+    q('.ffj-contract-logo')?.append(contractLogo);
   }
   const views=['ffjAuthView','ffjContractView','ffjLandingView'];
   const REMEMBER_KEY='footballFortuneRememberedLogin';
+  const PROFILE_KEY='footballFortunePlayerProfile';
+  let playerProfile={firstName:'Player',surname:'',fullName:'Player',gender:'male',email:''};
   let managerName='Player';
 
+  function normaliseProfile(raw){
+    const firstName=typeof raw?.firstName==='string'?raw.firstName.trim():'';
+    const surname=typeof raw?.surname==='string'?raw.surname.trim():'';
+    const fullName=[firstName,surname].filter(Boolean).join(' ') || (typeof raw?.fullName==='string'&&raw.fullName.trim()?raw.fullName.trim():'Player');
+    return {
+      firstName:firstName || (fullName!=='Player'?fullName.split(/\s+/)[0]:'Player'),
+      surname:surname || (fullName.includes(' ')?fullName.split(/\s+/).slice(1).join(' '):''),
+      fullName,
+      gender:raw?.gender==='female'?'female':'male',
+      email:typeof raw?.email==='string'?raw.email:''
+    };
+  }
+  function loadPlayerProfile(){
+    try{
+      const saved=JSON.parse(localStorage.getItem(PROFILE_KEY)||'null');
+      return saved?normaliseProfile(saved):null;
+    }catch(e){return null;}
+  }
+  function savePlayerProfile(profile){
+    playerProfile=normaliseProfile(profile);
+    managerName=playerProfile.firstName || playerProfile.fullName || 'Player';
+    window.FOOTBALL_FORTUNE_PLAYER_PROFILE={...playerProfile};
+    try{localStorage.setItem(PROFILE_KEY,JSON.stringify(playerProfile));}catch(e){}
+  }
   function loadRememberedLogin(){
     try{
       const saved=JSON.parse(localStorage.getItem(REMEMBER_KEY)||'null');
       if(!saved?.remembered)return null;
-      return {
-        email:typeof saved.email==='string'?saved.email:'',
-        name:typeof saved.name==='string'&&saved.name.trim()?saved.name.trim():'Player'
-      };
+      return {email:typeof saved.email==='string'?saved.email:''};
     }catch(e){return null;}
   }
-  function saveRememberedLogin(email,name){
+  function saveRememberedLogin(email){
     try{
-      localStorage.setItem(REMEMBER_KEY,JSON.stringify({
-        remembered:true,
-        email:email||'',
-        name:name||'Player'
-      }));
+      localStorage.setItem(REMEMBER_KEY,JSON.stringify({remembered:true,email:email||''}));
     }catch(e){}
   }
   function clearRememberedLogin(){
     try{localStorage.removeItem(REMEMBER_KEY);}catch(e){}
+  }
+  function populateContract(){
+    const full=playerProfile.fullName || 'Player';
+    const surname=playerProfile.surname || playerProfile.firstName || full;
+    if(q('#ffjContractPlayer'))q('#ffjContractPlayer').textContent=full;
+    if(q('#ffjContractSignature'))q('#ffjContractSignature').textContent=full;
+    if(q('#ffjContractHeadlineName'))q('#ffjContractHeadlineName').textContent=full;
+    if(q('#ffjContractStoryName'))q('#ffjContractStoryName').textContent=full;
+    if(q('#ffjContractStorySurname'))q('#ffjContractStorySurname').textContent=surname;
   }
 
   function showJourneyView(id){
@@ -305,7 +336,7 @@
     q('#ffjSignupTab')?.classList.toggle('active',id==='ffjSignupPane');
   }
   function showLanding(){
-    q('#ffjWelcome').textContent=`Welcome, ${managerName || 'Player'}!`;
+    q('#ffjWelcome').textContent=`Welcome back, ${playerProfile.firstName || managerName || 'Player'}!`;
     showJourneyView('ffjLandingView');
   }
   function startFriendly(){
@@ -338,26 +369,34 @@
     const email=q('#ffjLoginEmail').value.trim();
     const pw=q('#ffjLoginPassword').value;
     if(!email||!pw){q('#ffjLoginMessage').textContent='Enter your email address and password.';return;}
-    const remembered=loadRememberedLogin();
-    managerName=remembered?.email===email&&remembered?.name?remembered.name:'Player';
-    if(q('#ffjRememberMe')?.checked) saveRememberedLogin(email,managerName);
+    const savedProfile=loadPlayerProfile();
+    if(savedProfile && (!savedProfile.email || savedProfile.email.toLowerCase()===email.toLowerCase())){
+      savePlayerProfile({...savedProfile,email});
+    }else{
+      savePlayerProfile({firstName:'Player',surname:'',fullName:'Player',gender:'male',email});
+    }
+    if(q('#ffjRememberMe')?.checked) saveRememberedLogin(email);
     else clearRememberedLogin();
     showLanding();
   });
 
   q('#ffjSignupBtn')?.addEventListener('click',()=>{
-    const name=q('#ffjSignupName').value.trim();
+    const firstName=q('#ffjSignupFirstName').value.trim();
+    const surname=q('#ffjSignupSurname').value.trim();
     const email=q('#ffjSignupEmail').value.trim();
     const pw=q('#ffjSignupPassword').value;
-    if(!name||!email||pw.length<8){q('#ffjSignupMessage').textContent='Enter your name, email and a password of at least 8 characters.';return;}
-    managerName=name;
-    q('#ffjContractName').textContent=`Welcome, ${managerName}!`;
-    // Keep the account identity available for future remembered logins; never store the password.
-    saveRememberedLogin(email,managerName);
+    const gender=q('[data-ffj-gender].active')?.dataset.ffjGender || 'male';
+    if(!firstName||!surname||!email||pw.length<8){
+      q('#ffjSignupMessage').textContent='Enter your first name, surname, email and a password of at least 8 characters.';
+      return;
+    }
+    savePlayerProfile({firstName,surname,fullName:`${firstName} ${surname}`,gender,email});
+    saveRememberedLogin(email);
+    populateContract();
     showJourneyView('ffjContractView');
   });
-  document.querySelectorAll('[data-ffj-character]').forEach(btn=>btn.addEventListener('click',()=>{
-    document.querySelectorAll('[data-ffj-character]').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('[data-ffj-gender]').forEach(btn=>btn.addEventListener('click',()=>{
+    document.querySelectorAll('[data-ffj-gender]').forEach(x=>x.classList.remove('active'));
     btn.classList.add('active');
   }));
   q('#ffjResetBtn')?.addEventListener('click',()=>{
@@ -380,11 +419,16 @@
 
   // Restore a remembered browser session for a faster return experience.
   const rememberedLogin=loadRememberedLogin();
+  const storedProfile=loadPlayerProfile();
+  if(storedProfile)savePlayerProfile(storedProfile);
   if(rememberedLogin){
-    managerName=rememberedLogin.name;
     if(q('#ffjLoginEmail'))q('#ffjLoginEmail').value=rememberedLogin.email;
     if(q('#ffjRememberMe'))q('#ffjRememberMe').checked=true;
-    showLanding();
+    if(storedProfile && (!storedProfile.email || storedProfile.email.toLowerCase()===rememberedLogin.email.toLowerCase())){
+      showLanding();
+    }else{
+      showJourneyView('ffjAuthView');
+    }
   }else{
     showJourneyView('ffjAuthView');
   }
