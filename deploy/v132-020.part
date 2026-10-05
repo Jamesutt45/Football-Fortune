@@ -560,9 +560,12 @@
     const modal=q('#ffjLoadBackdrop');modal?.classList.add('hidden');modal?.setAttribute('aria-hidden','true');
   }
 
-  const TOURNAMENT_KEY='footballFortuneTournamentV1';
+  const TOURNAMENT_KEY='footballFortuneTournamentV2';
+  const ENGLAND_FLAG='\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}';
+  const SCOTLAND_FLAG='\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}';
+  const WALES_FLAG='\u{1F3F4}\u{E0067}\u{E0062}\u{E0077}\u{E006C}\u{E0073}\u{E007F}';
   const TOURNAMENT_COUNTRIES=[
-    {name:'England',flag:'🇬🇧'},{name:'Scotland',flag:'🏴'},{name:'Wales',flag:'🏴'},{name:'Republic of Ireland',flag:'🇮🇪'},
+    {name:'England',flag:ENGLAND_FLAG},{name:'Scotland',flag:SCOTLAND_FLAG},{name:'Wales',flag:WALES_FLAG},{name:'Republic of Ireland',flag:'🇮🇪'},
     {name:'France',flag:'🇫🇷'},{name:'Spain',flag:'🇪🇸'},{name:'Portugal',flag:'🇵🇹'},{name:'Germany',flag:'🇩🇪'},
     {name:'Italy',flag:'🇮🇹'},{name:'Netherlands',flag:'🇳🇱'},{name:'Belgium',flag:'🇧🇪'},{name:'Croatia',flag:'🇭🇷'},
     {name:'Denmark',flag:'🇩🇰'},{name:'Switzerland',flag:'🇨🇭'},{name:'Austria',flag:'🇦🇹'},{name:'Norway',flag:'🇳🇴'},
@@ -571,7 +574,26 @@
     {name:'United States',flag:'🇺🇸'},{name:'Mexico',flag:'🇲🇽'},{name:'Canada',flag:'🇨🇦'},{name:'Japan',flag:'🇯🇵'},
     {name:'South Korea',flag:'🇰🇷'},{name:'Australia',flag:'🇦🇺'},{name:'Morocco',flag:'🇲🇦'},{name:'Nigeria',flag:'🇳🇬'}
   ];
+  const DOMESTIC_CLUBS=[
+    {name:'Northbridge Rovers',flag:'🔵'},{name:'Calder City',flag:'🟡'},{name:'Mersey Crown',flag:'🔴'},{name:'Redhaven Athletic',flag:'⚪'},
+    {name:'Eastmoor FC',flag:'🟣'},{name:'Westbridge Town',flag:'🟢'},{name:'Southgate Albion',flag:'🔵'},{name:'Ironfield United',flag:'⚫'},
+    {name:'Kingswell City',flag:'🟠'},{name:'Oakchester FC',flag:'🟤'},{name:'Rivergate Athletic',flag:'🔷'},{name:'Stoneford Town',flag:'🔶'},
+    {name:'Blackmere FC',flag:'⚫'},{name:'Greenborough United',flag:'🟢'},{name:'Highfield Crown',flag:'🟡'},{name:'Portcastle FC',flag:'🔵'}
+  ];
+  const EUROPEAN_CLUBS=[
+    ...DOMESTIC_CLUBS,
+    {name:'Madrid Sol',flag:'🇪🇸'},{name:'Catalonia Stars',flag:'🇪🇸'},{name:'Sevilla Oro',flag:'🇪🇸'},
+    {name:'Milano Scala',flag:'🇮🇹'},{name:'Torino Aurora',flag:'🇮🇹'},{name:'Roma Imperiale',flag:'🇮🇹'},
+    {name:'Paris Lumière',flag:'🇫🇷'},{name:'Marseille Bleu',flag:'🇫🇷'},
+    {name:'Rhine Adler',flag:'🇩🇪'},{name:'Bavaria König',flag:'🇩🇪'},{name:'Berlin Unionia',flag:'🇩🇪'},
+    {name:'Amsterdam Oranje',flag:'🇳🇱'},{name:'Rotterdam Harbour',flag:'🇳🇱'},
+    {name:'Lisboa Navegantes',flag:'🇵🇹'},{name:'Porto Atlântico',flag:'🇵🇹'},
+    {name:'Bruges Royale',flag:'🇧🇪'},{name:'Vienna Imperial',flag:'🇦🇹'},{name:'Prague Lions',flag:'🇨🇿'},
+    {name:'Copenhagen North',flag:'🇩🇰'},{name:'Stockholm Crown',flag:'🇸🇪'}
+  ];
   let selectedTournamentSize=16;
+  let selectedTournamentType='countries';
+  let selectedClubScope='domestic';
   let tournamentState=null;
 
   function tournamentRoundNames(size){
@@ -603,32 +625,80 @@
     q('#ffjTournamentSetup')?.setAttribute('aria-hidden','true');
     q('#ffjTournamentHub')?.setAttribute('aria-hidden','true');
   }
-  function populateTournamentCountries(){
+  function currentTournamentPool(){
+    if(selectedTournamentType==='clubs'){
+      return selectedClubScope==='european'?EUROPEAN_CLUBS:DOMESTIC_CLUBS;
+    }
+    return TOURNAMENT_COUNTRIES;
+  }
+  function tournamentCompetitionMeta(){
+    if(selectedTournamentType==='clubs'&&selectedClubScope==='european'){
+      return {
+        name:'Fortune Champions Cup',
+        copy:'A European club knockout tournament featuring fictional clubs from across the continent.',
+        noun:'clubs'
+      };
+    }
+    if(selectedTournamentType==='clubs'){
+      return {
+        name:'Fortune Cup',
+        copy:'A domestic knockout cup featuring fictional English clubs. Draws go to penalties until one club lifts the trophy.',
+        noun:'clubs'
+      };
+    }
+    return {
+      name:'Fortune Nations Cup',
+      copy:'A single-elimination international tournament. Draws go to penalties and only one nation can lift the trophy.',
+      noun:'countries'
+    };
+  }
+  function updateTournamentSetup(){
+    const clubMode=selectedTournamentType==='clubs';
+    q('#ffjClubScope')?.classList.toggle('hidden',!clubMode);
+    if(q('#ffjTournamentTeamLabel'))q('#ffjTournamentTeamLabel').textContent=clubMode?'Your club':'Your nation';
+    if(q('#ffjTournamentTeamHelp'))q('#ffjTournamentTeamHelp').textContent=clubMode
+      ? 'Choose the club you will manage throughout the tournament.'
+      : 'Choose the nation you will manage throughout the tournament.';
+    const meta=tournamentCompetitionMeta();
+    if(q('#ffjTournamentSetupCompetitionName'))q('#ffjTournamentSetupCompetitionName').textContent=meta.name;
+    if(q('#ffjTournamentSetupCompetitionCopy'))q('#ffjTournamentSetupCompetitionCopy').textContent=meta.copy;
+    populateTournamentTeams();
+  }
+  function populateTournamentTeams(){
     const select=q('#ffjTournamentCountry');if(!select)return;
-    if(select.options.length)return;
-    TOURNAMENT_COUNTRIES.forEach(c=>{
+    const previous=select.value;
+    const pool=currentTournamentPool();
+    select.innerHTML='';
+    pool.forEach(team=>{
       const option=document.createElement('option');
-      option.value=c.name;
-      option.textContent=c.flag+'  '+c.name;
+      option.value=team.name;
+      option.textContent=team.flag+'  '+team.name;
       select.appendChild(option);
     });
-    select.value='England';
+    const fallback=selectedTournamentType==='countries'?'England':pool[0]?.name;
+    select.value=pool.some(t=>t.name===previous)?previous:fallback;
   }
   function openTournamentSetup(){
     closeAllMenus?.();
-    populateTournamentCountries();
+    updateTournamentSetup();
     showTournamentScreen('setup');
   }
   function createTournament(){
-    const countryName=q('#ffjTournamentCountry')?.value||'England';
-    const userCountry=TOURNAMENT_COUNTRIES.find(c=>c.name===countryName)||TOURNAMENT_COUNTRIES[0];
-    const others=shuffled(TOURNAMENT_COUNTRIES.filter(c=>c.name!==userCountry.name)).slice(0,selectedTournamentSize-1);
-    const teams=shuffled([userCountry,...others]);
+    const pool=currentTournamentPool();
+    const selectedName=q('#ffjTournamentCountry')?.value||pool[0]?.name;
+    const userTeam=pool.find(t=>t.name===selectedName)||pool[0];
+    const others=shuffled(pool.filter(t=>t.name!==userTeam.name)).slice(0,selectedTournamentSize-1);
+    const teams=shuffled([userTeam,...others]);
+    const meta=tournamentCompetitionMeta();
     tournamentState={
       id:'tournament_'+Date.now(),
-      competition:'Fortune Nations Cup',
+      competition:meta.name,
+      tournamentType:selectedTournamentType,
+      clubScope:selectedTournamentType==='clubs'?selectedClubScope:null,
+      participantNoun:meta.noun,
       size:selectedTournamentSize,
-      userCountry:userCountry.name,
+      userCountry:userTeam.name,
+      userTeam:userTeam.name,
       createdAt:new Date().toISOString(),
       currentRound:0,
       teams,
@@ -657,7 +727,7 @@
     showTournamentScreen('hub');
   }
   function countryByName(name){
-    return TOURNAMENT_COUNTRIES.find(c=>c.name===name)||{name:name||'TBC',flag:'⚪'};
+    return [...TOURNAMENT_COUNTRIES,...EUROPEAN_CLUBS].find(c=>c.name===name)||{name:name||'TBC',flag:'⚪'};
   }
   function teamRow(team,emptyLabel='Winner TBC',score=null,stateClass=''){
     if(!team)return '<div class="ffj-bracket-team empty"><span class="ffj-bracket-team-main"><span class="ffj-flag">○</span><span>'+emptyLabel+'</span></span></div>';
@@ -859,7 +929,7 @@
     const title=q('#ffjTournamentTitle');
     if(title)title.textContent='Tournament · '+roundNames[tournamentState.currentRound];
     q('#ffjTournamentHeading').textContent=tournamentState.competition;
-    q('#ffjTournamentSummaryText').textContent=tournamentState.size+' countries · '+roundNames[0]+' to Final · Single elimination';
+    q('#ffjTournamentSummaryText').textContent=tournamentState.size+' '+(tournamentState.participantNoun||'countries')+' · '+roundNames[0]+' to Final · Single elimination';
     q('#ffjTournamentStatusBanner')?.remove();
     const banner=document.createElement('div');
     banner.id='ffjTournamentStatusBanner';
@@ -867,8 +937,8 @@
     if(tournamentState.completed){
       banner.classList.add('champion');
       banner.textContent=tournamentState.champion?.name===tournamentState.userCountry
-        ? '🏆 '+tournamentState.userCountry+' are the Fortune Nations Cup champions!'
-        : '🏆 '+(tournamentState.champion?.name||'The winner')+' are the Fortune Nations Cup champions.';
+        ? '🏆 '+tournamentState.userCountry+' are the '+tournamentState.competition+' champions!'
+        : '🏆 '+(tournamentState.champion?.name||'The winner')+' are the '+tournamentState.competition+' champions.';
     }else if(tournamentState.eliminated){
       banner.classList.add('eliminated');
       banner.textContent=tournamentState.userCountry+' have been eliminated. You can still follow the remaining tournament bracket.';
@@ -964,6 +1034,24 @@
     hideTournamentScreens();
     q('#ffjModeBackdrop')?.classList.remove('hidden');
   });
+  document.querySelectorAll('[data-tournament-type]').forEach(btn=>btn.addEventListener('click',()=>{
+    selectedTournamentType=btn.dataset.tournamentType==='clubs'?'clubs':'countries';
+    document.querySelectorAll('[data-tournament-type]').forEach(x=>{
+      const selected=x===btn;
+      x.classList.toggle('selected',selected);
+      x.setAttribute('aria-pressed',selected?'true':'false');
+    });
+    updateTournamentSetup();
+  }));
+  document.querySelectorAll('[data-club-scope]').forEach(btn=>btn.addEventListener('click',()=>{
+    selectedClubScope=btn.dataset.clubScope==='european'?'european':'domestic';
+    document.querySelectorAll('[data-club-scope]').forEach(x=>{
+      const selected=x===btn;
+      x.classList.toggle('selected',selected);
+      x.setAttribute('aria-pressed',selected?'true':'false');
+    });
+    updateTournamentSetup();
+  }));
   document.querySelectorAll('[data-tournament-size]').forEach(btn=>btn.addEventListener('click',()=>{
     selectedTournamentSize=Number(btn.dataset.tournamentSize)||16;
     document.querySelectorAll('[data-tournament-size]').forEach(x=>{
