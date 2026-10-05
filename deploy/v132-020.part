@@ -254,12 +254,18 @@
 (() => {
   const q=s=>document.querySelector(s);
   const shell=q('#ffJourneyShell');
-  // Reuse the approved login artwork rather than introducing a second image.
+  // Reuse the approved login artwork and logo rather than introducing new assets.
   const playerArtwork=q('.ffj-auth-visual .ffj-hero img');
   if(playerArtwork){
     const image=playerArtwork.cloneNode(true);
     image.alt='Male and female Football Fortune players';
     q('.ffj-landing-art')?.append(image);
+  }
+  const brandLogo=q('.ffj-auth-visual .ffj-visual-logo img');
+  if(brandLogo){
+    const logo=brandLogo.cloneNode(true);
+    logo.alt='Football Fortune';
+    q('.ffj-landing-logo')?.append(logo);
   }
   const views=['ffjAuthView','ffjContractView','ffjLandingView'];
   const REMEMBER_KEY='footballFortuneRememberedLogin';
