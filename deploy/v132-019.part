@@ -73,6 +73,16 @@ LdsuI+MtnU/qkf4wJ3Np2Z8nPWYMADBnUCjBxNutsj5A+CJ8zpQBBgqfnX0OWi9TuFug3TYi4jRsCY6G
   }
   function finishShootout(winner){
     const so=state.shootout;if(!so)return;so.winner=winner;state.finished=true;state.phase='finished';ffScheduleAutosave('shootout-finished');
+    if(getMatchMode()==='tournament'){
+      window.FOOTBALL_FORTUNE_TOURNAMENT_MATCH_COMPLETE?.({
+        winner:teamName(winner),
+        homeTeam:teamName('blue'),
+        awayTeam:teamName('red'),
+        homeScore:state.score.blue,
+        awayScore:state.score.red,
+        penalties:{home:so.goals.blue,away:so.goals.red}
+      });
+    }
     const loser=other(winner),penScore=`${so.goals[winner]}–${so.goals[loser]}`;
     report(winner,'SHOOTOUT WINNERS',`${teamName(winner)} win ${penScore} on penalties!`,'🏆',95);updateStandardDiceAvailability();
     const delay=state.quickSimulating?180:950;
@@ -147,6 +157,17 @@ LdsuI+MtnU/qkf4wJ3Np2Z8nPWYMADBnUCjBxNutsj5A+CJ8zpQBBgqfnX0OWi9TuFug3TYi4jRsCY6G
 
     state.finished=true;state.phase='finished';
     ffScheduleAutosave('full-time');
+    if(getMatchMode()==='tournament'){
+      const winner=state.score.blue>state.score.red?'blue':'red';
+      window.FOOTBALL_FORTUNE_TOURNAMENT_MATCH_COMPLETE?.({
+        winner:teamName(winner),
+        homeTeam:teamName('blue'),
+        awayTeam:teamName('red'),
+        homeScore:state.score.blue,
+        awayScore:state.score.red,
+        penalties:null
+      });
+    }
     if(!state.quickSimulating)setTimeout(showFinalResult,650);
   }
   async function doRoll(){
