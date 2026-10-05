@@ -780,135 +780,17 @@ body.ffj-pre-game > .app{display:none!important}
   position:relative;
   overflow:hidden;
   min-height:100dvh;
-  padding:42px;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  color:#fff;
-  background:
-    radial-gradient(circle at 24% 18%,rgba(255,255,255,.14),transparent 24%),
-    linear-gradient(145deg,#0d7a4f 0%,#075d3c 58%,#06472f 100%);
+  padding:0;
+  background:#eef3f7;
 }
-.ffj-contract-art:before{
-  content:"";
+.ffj-contract-art img.ffj-contract-signing-image{
   position:absolute;
-  inset:24px;
-  border:2px solid rgba(255,255,255,.18);
-  border-radius:22px;
-  pointer-events:none;
-}
-.ffj-contract-art:after{
-  content:"";
-  position:absolute;
-  width:360px;height:360px;
-  right:-150px;bottom:-150px;
-  border:2px solid rgba(255,255,255,.11);
-  border-radius:50%;
-  box-shadow:0 0 0 58px rgba(255,255,255,.035),0 0 0 116px rgba(255,255,255,.025);
-  pointer-events:none;
-}
-.ffj-contract-logo{
-  position:relative;
-  z-index:2;
-  width:min(320px,78%);
-  min-height:74px;
-  display:flex;
-  align-items:center;
-}
-.ffj-contract-logo img{width:100%;height:auto;display:block;filter:brightness(0) invert(1)}
-.ffj-contract-paper{
-  position:relative;
-  z-index:2;
-  width:min(100%,430px);
-  margin:28px auto 12px;
-  padding:34px 34px 30px;
-  border-radius:18px;
-  background:#fff;
-  color:#17385f;
-  box-shadow:0 24px 60px rgba(0,0,0,.25);
-  transform:rotate(-1.25deg);
-}
-.ffj-contract-paper:before{
-  content:"";
-  position:absolute;
-  inset:13px;
-  border:1px solid #dfe8e2;
-  border-radius:12px;
-  pointer-events:none;
-}
-.ffj-contract-kicker{
-  position:relative;
-  font-size:11px;
-  font-weight:950;
-  letter-spacing:.18em;
-  color:#6b8375;
-  text-transform:uppercase;
-}
-.ffj-contract-paper h2{
-  position:relative;
-  margin:8px 0 24px;
-  font-size:30px;
-  line-height:1.02;
-  letter-spacing:-.8px;
-  color:#0b5e3e;
-}
-.ffj-contract-row{
-  position:relative;
-  display:grid;
-  grid-template-columns:96px 1fr;
-  gap:12px;
-  padding:12px 0;
-  border-top:1px solid #e5ece7;
-  font-size:14px;
-}
-.ffj-contract-row span{color:#7b8c82;font-weight:800}
-.ffj-contract-row strong{color:#193b2e}
-.ffj-signature{
-  position:relative;
-  margin-top:28px;
-  padding-top:18px;
-  border-top:1px solid #dfe8e2;
-}
-.ffj-signature-name{
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center center;
   display:block;
-  font-family:"Segoe Script","Bradley Hand",cursive;
-  font-size:28px;
-  line-height:1;
-  color:#133f31;
-  transform:rotate(-3deg);
-  transform-origin:left center;
-}
-.ffj-signature-label{
-  display:block;
-  margin-top:8px;
-  font-size:10px;
-  font-weight:900;
-  letter-spacing:.14em;
-  color:#8a9b91;
-  text-transform:uppercase;
-}
-.ffj-signed-stamp{
-  position:absolute;
-  right:24px;bottom:28px;
-  padding:8px 12px;
-  border:3px solid #16865b;
-  border-radius:8px;
-  color:#16865b;
-  font-size:12px;
-  font-weight:1000;
-  letter-spacing:.12em;
-  transform:rotate(-8deg);
-}
-.ffj-contract-art-note{
-  position:relative;
-  z-index:2;
-  margin:0;
-  text-align:center;
-  font-size:12px;
-  font-weight:850;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  color:rgba(255,255,255,.72);
 }
 .ffj-contract-news{
   min-height:100dvh;
@@ -949,9 +831,7 @@ body.ffj-pre-game > .app{display:none!important}
     min-height:100dvh;
     grid-template-columns:1fr;
     margin:0;
-  }
-  .ffj-contract-art{min-height:560px;padding:30px}
-  .ffj-contract-news{padding:38px 30px 34px}
+  }  .ffj-contract-news{padding:38px 30px 34px}
 }
 
 .ffj-landing-wrap{
