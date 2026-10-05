@@ -564,6 +564,13 @@
   const ENGLAND_FLAG='\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}';
   const SCOTLAND_FLAG='\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}';
   const WALES_FLAG='\u{1F3F4}\u{E0067}\u{E0062}\u{E0077}\u{E006C}\u{E0073}\u{E007F}';
+  const COUNTRY_FLAG_CODES={
+    'England':'gb-eng','Scotland':'gb-sct','Wales':'gb-wls','Republic of Ireland':'ie',
+    'France':'fr','Spain':'es','Portugal':'pt','Germany':'de','Italy':'it','Netherlands':'nl','Belgium':'be','Croatia':'hr',
+    'Denmark':'dk','Switzerland':'ch','Austria':'at','Norway':'no','Sweden':'se','Poland':'pl','Ukraine':'ua','Türkiye':'tr',
+    'Brazil':'br','Argentina':'ar','Uruguay':'uy','Colombia':'co','United States':'us','Mexico':'mx','Canada':'ca','Japan':'jp',
+    'South Korea':'kr','Australia':'au','Morocco':'ma','Nigeria':'ng'
+  };
   const TOURNAMENT_COUNTRIES=[
     {name:'England',flag:ENGLAND_FLAG},{name:'Scotland',flag:SCOTLAND_FLAG},{name:'Wales',flag:WALES_FLAG},{name:'Republic of Ireland',flag:'🇮🇪'},
     {name:'France',flag:'🇫🇷'},{name:'Spain',flag:'🇪🇸'},{name:'Portugal',flag:'🇵🇹'},{name:'Germany',flag:'🇩🇪'},
@@ -664,6 +671,21 @@
     if(q('#ffjTournamentSetupCompetitionCopy'))q('#ffjTournamentSetupCompetitionCopy').textContent=meta.copy;
     populateTournamentTeams();
   }
+  function clubInitials(name){
+    return String(name||'FC').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();
+  }
+  function renderSelectedTournamentBadge(){
+    const host=q('#ffjTournamentSelectedBadge');
+    const select=q('#ffjTournamentCountry');
+    if(!host||!select)return;
+    const name=select.value;
+    if(selectedTournamentType==='countries'){
+      const code=COUNTRY_FLAG_CODES[name]||'gb-eng';
+      host.innerHTML='<img src="https://flagcdn.com/40x30/'+code+'.png" alt="">';
+    }else{
+      host.innerHTML='<span class="ffj-club-badge">'+clubInitials(name)+'</span>';
+    }
+  }
   function populateTournamentTeams(){
     const select=q('#ffjTournamentCountry');if(!select)return;
     const previous=select.value;
@@ -672,11 +694,12 @@
     pool.forEach(team=>{
       const option=document.createElement('option');
       option.value=team.name;
-      option.textContent=team.flag+'  '+team.name;
+      option.textContent=team.name;
       select.appendChild(option);
     });
     const fallback=selectedTournamentType==='countries'?'England':pool[0]?.name;
     select.value=pool.some(t=>t.name===previous)?previous:fallback;
+    renderSelectedTournamentBadge();
   }
   function openTournamentSetup(){
     closeAllMenus?.();
@@ -1060,7 +1083,8 @@
       x.setAttribute('aria-pressed',selected?'true':'false');
     });
   }));
-  q('#ffjGenerateTournamentBtn')?.addEventListener('click',createTournament);
+  q('#ffjTournamentCountry')?.addEventListener('change',renderSelectedTournamentBadge);
+    q('#ffjGenerateTournamentBtn')?.addEventListener('click',createTournament);
   q('#ffjBracketGrid')?.addEventListener('click',(e)=>{
     const btn=e.target.closest('[data-play-tournament-match]');
     if(!btn)return;
