@@ -423,62 +423,95 @@
   const modeBackdrop=q('#ffjModeBackdrop');
   const modeMenuBtn=q('#ffjModeMenuBtn');
   const modeMenuPanel=q('#ffjModeMenuPanel');
+  const menuBtn=q('#ffMenuBtn');
+  const menuPanel=q('#ffMenuPanel');
+
   function closeModeMenu(){
     modeMenuPanel?.classList.add('hidden');
     modeMenuPanel?.setAttribute('aria-hidden','true');
     modeMenuBtn?.setAttribute('aria-expanded','false');
   }
-  function openModeSelect(){
+  function closeMatchMenu(){
+    menuPanel?.classList.add('hidden');
+    menuPanel?.setAttribute('aria-hidden','true');
+    menuBtn?.setAttribute('aria-expanded','false');
+  }
+  function closeAllMenus(){
     closeModeMenu();
+    closeMatchMenu();
+  }
+  function openModeSelect(){
+    closeAllMenus();
+    shell?.classList.remove('hidden');
+    document.body.classList.add('ffj-pre-game');
     modeBackdrop?.classList.remove('hidden');
   }
   function closeModeSelect(){
     closeModeMenu();
     modeBackdrop?.classList.add('hidden');
   }
+  function goHome(){
+    closeAllMenus();
+    modeBackdrop?.classList.add('hidden');
+    shell?.classList.remove('hidden');
+    document.body.classList.add('ffj-pre-game');
+    showLanding();
+  }
+  function logoutToLogin(){
+    closeAllMenus();
+    modeBackdrop?.classList.add('hidden');
+    shell?.classList.remove('hidden');
+    document.body.classList.add('ffj-pre-game');
+
+    // Log out of the active session, but leave the saved profile itself intact.
+    clearRememberedLogin();
+    managerName='Player';
+
+    if(q('#ffjLoginPassword')) q('#ffjLoginPassword').value='';
+    if(q('#ffjLoginMessage')) q('#ffjLoginMessage').textContent='';
+    if(q('#ffjRememberMe')) q('#ffjRememberMe').checked=false;
+
+    showAuthPane('ffjLoginPane');
+    showJourneyView('ffjAuthView');
+  }
+
   q('#ffjNewGameBtn')?.addEventListener('click',openModeSelect);
   q('#ffjModeClose')?.addEventListener('click',closeModeSelect);
-  q('#ffjModeHomeBtn')?.addEventListener('click',()=>{
-    closeModeSelect();
-    showLanding();
+  q('#ffjContinueBtn')?.addEventListener('click',openModeSelect);
+  q('#ffjLoadBtn')?.addEventListener('click',openModeSelect);
+  q('#ffjFriendlyBtn')?.addEventListener('click',startFriendly);
+
+  // Mode-screen shell controls.
+  q('#ffjModeHomeBtn')?.addEventListener('click',(e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    goHome();
   });
-  q('#ffjModeMenuBtn')?.addEventListener('click',(e)=>{
+  modeMenuBtn?.addEventListener('click',(e)=>{
+    e.preventDefault();
     e.stopPropagation();
     const opening=modeMenuPanel?.classList.contains('hidden');
+    closeMatchMenu();
     if(opening){
       modeMenuPanel?.classList.remove('hidden');
       modeMenuPanel?.setAttribute('aria-hidden','false');
-      modeMenuBtn?.setAttribute('aria-expanded','true');
-    }else closeModeMenu();
+      modeMenuBtn.setAttribute('aria-expanded','true');
+    }else{
+      closeModeMenu();
+    }
   });
-  q('#ffjFriendlyBtn')?.addEventListener('click',startFriendly);
+  q('#ffjModeLogoutBtn')?.addEventListener('click',(e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    logoutToLogin();
+  });
 
-  q('#ffjContinueBtn')?.addEventListener('click',openModeSelect);
-  q('#ffjLoadBtn')?.addEventListener('click',openModeSelect);
-
-  // Always begin on Log In after a fresh open or browser refresh.
-  // Remembered details may be prefilled, but navigation never skips authentication.
-  const rememberedLogin=loadRememberedLogin();
-  const storedProfile=loadPlayerProfile();
-  if(storedProfile)savePlayerProfile(storedProfile);
-  if(rememberedLogin){
-    if(q('#ffjLoginEmail'))q('#ffjLoginEmail').value=rememberedLogin.email;
-    if(q('#ffjRememberMe'))q('#ffjRememberMe').checked=true;
-  }
-  showAuthPane('ffjLoginPane');
-  showJourneyView('ffjAuthView');
-
-  // Match menu and logout.
-  const menuBtn=q('#ffMenuBtn');
-  const menuPanel=q('#ffMenuPanel');
-  function closeMatchMenu(){
-    menuPanel?.classList.add('hidden');
-    menuPanel?.setAttribute('aria-hidden','true');
-    menuBtn?.setAttribute('aria-expanded','false');
-  }
+  // Live-match shell controls.
   menuBtn?.addEventListener('click',(e)=>{
+    e.preventDefault();
     e.stopPropagation();
     const opening=menuPanel?.classList.contains('hidden');
+    closeModeMenu();
     if(opening){
       menuPanel?.classList.remove('hidden');
       menuPanel?.setAttribute('aria-hidden','false');
@@ -487,31 +520,20 @@
       closeMatchMenu();
     }
   });
-  document.addEventListener('click',(e)=>{
-    if(!e.target.closest('.ff-menu-wrap')) closeMatchMenu();
-    if(!e.target.closest('.ffj-mode-menu-wrap')) closeModeMenu();
+  q('#ffLogoutBtn')?.addEventListener('click',(e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    logoutToLogin();
+  });
+  q('.app .ff-home-btn')?.addEventListener('click',(e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    goHome();
   });
 
-  function logoutToLogin(){
-    closeMatchMenu();
-    closeModeMenu();
-    modeBackdrop?.classList.add('hidden');
-    clearRememberedLogin();
-    managerName='Player';
-    if(q('#ffjLoginPassword'))q('#ffjLoginPassword').value='';
-    if(q('#ffjLoginMessage'))q('#ffjLoginMessage').textContent='';
-    if(q('#ffjRememberMe'))q('#ffjRememberMe').checked=false;
-    showAuthPane('ffjLoginPane');
-    showJourneyView('ffjAuthView');
-  }
-  q('#ffLogoutBtn')?.addEventListener('click',logoutToLogin);
-  q('#ffjModeLogoutBtn')?.addEventListener('click',logoutToLogin);
-
-  // Existing authenticated Home control returns to the landing page.
-  q('.ff-home-btn')?.addEventListener('click',(e)=>{
-    e.preventDefault();
-    closeMatchMenu();
-    showLanding();
+  document.addEventListener('click',(e)=>{
+    if(!e.target.closest('#ffjModeMenuPanel') && !e.target.closest('#ffjModeMenuBtn')) closeModeMenu();
+    if(!e.target.closest('#ffMenuPanel') && !e.target.closest('#ffMenuBtn')) closeMatchMenu();
   });
 })();
 </script>
