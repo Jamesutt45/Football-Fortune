@@ -20,7 +20,7 @@
     }
     let html=parts.join('');
     const cloudAuth='<script src="supabase-config.js"></scr'+'ipt><script src="football-fortune-auth.js"></scr'+'ipt>';
-    if(/<\\/body>/i.test(html)) html=html.replace(/<\\/body>/i,cloudAuth+'</body>');
+    if(/<\/body>/i.test(html)) html=html.replace(/<\/body>/i,cloudAuth+'</body>');
     else html+=cloudAuth;
     document.open();
     document.write(html);
