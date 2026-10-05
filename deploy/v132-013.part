@@ -66,6 +66,7 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
   <section class="ffj-view" id="ffjLandingView">
     <div class="ffj-landing-wrap">
       <main class="ffj-landing-main">
+        <div class="ffj-landing-inner">
         <div class="ffj-eyebrow">Your football story starts here</div>
         <h1 id="ffjWelcome">Welcome back!</h1>
         <p class="ffj-landing-sub">Choose how you want to continue your Football Fortune career.</p>
@@ -86,10 +87,10 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
             <span class="ffj-arrow">→</span>
           </button>
         </div>
+        </div>
       </main>
-      <aside class="ffj-landing-hero">
-        <div class="ffj-hero-copy"><strong>Football Fortune</strong><p>Build your story one match at a time.</p></div>
-        <div class="ffj-hero-ball">⚽</div>
+      <aside class="ffj-landing-hero" aria-label="Football Fortune players">
+        <div class="ffj-landing-art"></div>
       </aside>
     </div>
   </section>

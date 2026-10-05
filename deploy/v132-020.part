@@ -254,6 +254,13 @@
 (() => {
   const q=s=>document.querySelector(s);
   const shell=q('#ffJourneyShell');
+  // Reuse the approved login artwork rather than introducing a second image.
+  const playerArtwork=q('.ffj-auth-visual .ffj-hero img');
+  if(playerArtwork){
+    const image=playerArtwork.cloneNode(true);
+    image.alt='Male and female Football Fortune players';
+    q('.ffj-landing-art')?.append(image);
+  }
   const views=['ffjAuthView','ffjContractView','ffjLandingView'];
   const REMEMBER_KEY='footballFortuneRememberedLogin';
   let managerName='Player';
