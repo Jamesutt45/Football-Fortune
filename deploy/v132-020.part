@@ -55,7 +55,97 @@
     }
   }
 
+  const FF_FRIENDLY_SAVE_KEY='footballFortuneFriendlySavesV1';
+  let ffActiveSaveId=null;
+  let ffSaveEnabled=false;
+  let ffAutosaveTimer=null;
+
+  function ffReadSaves(){
+    try{const raw=JSON.parse(localStorage.getItem(FF_FRIENDLY_SAVE_KEY)||'[]');return Array.isArray(raw)?raw:[];}catch(e){return [];}
+  }
+  function ffWriteSaves(saves){localStorage.setItem(FF_FRIENDLY_SAVE_KEY,JSON.stringify(saves.slice(0,20)));}
+  function ffNewSaveId(){return 'friendly_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);}
+  function ffClone(value){return JSON.parse(JSON.stringify(value));}
+  function ffSaveSummary(id,createdAt,updatedAt){
+    return {
+      id,version:1,mode:'friendly',createdAt,updatedAt,
+      status:state?.finished?'finished':'in-progress',
+      minute:currentMinute(),score:ffClone(state?.score||{blue:0,red:0}),
+      homeTeam:teamName('blue'),awayTeam:teamName('red'),managerSurname:managerSurname(),
+      state:ffClone(state),board:ffClone(window.FOOTBALL_FORTUNE_CURRENT_BOARD||[]),
+      feedHTML:$('.live-report-feed')?.innerHTML||''
+    };
+  }
+  function ffSaveGame(reason='autosave'){
+    if(!ffSaveEnabled||!state||state.busy)return null;
+    const now=new Date().toISOString(),saves=ffReadSaves();
+    const existing=ffActiveSaveId?saves.find(s=>s.id===ffActiveSaveId):null;
+    if(!ffActiveSaveId)ffActiveSaveId=ffNewSaveId();
+    const save=ffSaveSummary(ffActiveSaveId,existing?.createdAt||now,now);
+    const next=[save,...saves.filter(s=>s.id!==ffActiveSaveId)].sort((a,b)=>new Date(b.updatedAt)-new Date(a.updatedAt));
+    ffWriteSaves(next);
+    window.dispatchEvent(new CustomEvent('football-fortune-save-changed',{detail:{reason,save}}));
+    return save;
+  }
+  function ffScheduleAutosave(reason='turn'){
+    if(!ffSaveEnabled)return;
+    clearTimeout(ffAutosaveTimer);
+    ffAutosaveTimer=setTimeout(()=>ffSaveGame(reason),100);
+  }
+  function ffShowSaveToast(message='Game saved'){
+    document.querySelector('.ff-save-toast')?.remove();
+    const el=document.createElement('div');el.className='ff-save-toast';el.textContent='✓ '+message;document.body.appendChild(el);
+    setTimeout(()=>el.classList.add('hide'),1500);setTimeout(()=>el.remove(),1800);
+  }
+  function ffRestorePhaseUI(){
+    hideFinalResult();hideShootoutTransition();
+    const shoot=$('#ffIntegratedPenalty'),pitch=$('.pitch-stage');
+    if(state.phase==='shootout'&&state.shootout){
+      $('#ffGameModal')?.classList.add('hidden');pitch?.classList.add('hidden');shoot?.classList.remove('hidden');shoot?.setAttribute('aria-hidden','false');updateShootoutUI();return;
+    }
+    shoot?.classList.add('hidden');shoot?.setAttribute('aria-hidden','true');pitch?.classList.remove('hidden');
+    if(state.phase==='pre-shootout'){showShootoutTransition();return;}
+    if(state.phase==='chance'&&state.pending){
+      const p=state.pending,team=teamName(p.player||state.current);
+      if(p.kind==='goal'){
+        const nums=p.parity==='odd'?[1,3,5]:[2,4,6];
+        setModal('GOAL CHANCE',team+' chance','','ROLL TO SHOOT',true,{kind:'goal',headline:p.parity==='odd'?'Odd numbers score':'Even numbers score',commentary:chanceModalCommentary(p.parity==='odd'?'goal-odd':'goal-even',team),numbers:nums});
+      }else if(p.kind==='free'||p.kind==='penalty'){
+        const isFree=p.kind==='free';
+        setModal(isFree?'FREE KICK':'PENALTY',team+' chance','',isFree?'ROLL FREE KICK':'ROLL TO SHOOT',true,{kind:p.kind,headline:isFree?'2 of 6 numbers score':'4 of 6 numbers score',commentary:chanceModalCommentary(p.kind,team),numbers:p.numbers||[]});
+      }else{
+        const target=(p.numbers||[])[0]||state.m95Target;
+        setModal('95TH MINUTE','Last chance!','Roll a '+target+' to score.','ROLL TO SHOOT');
+      }
+      return;
+    }
+    if(state.finished||state.phase==='finished'){
+      $('#ffGameModal')?.classList.add('hidden');$('#ffGameModal')?.setAttribute('aria-hidden','true');updateStandardDiceAvailability();return;
+    }
+    setModal(state.finalTurnFor?'FINAL ROLL':'YOUR TURN',state.finalTurnFor?(teamName(state.current)+' have one last roll'):((state.current==='blue'?'Blue':'Red')+' team to roll'),'','ROLL DICE');
+  }
+  function ffLoadSave(id){
+    const save=ffReadSaves().find(s=>s.id===id);if(!save)return false;
+    ffSaveEnabled=true;ffActiveSaveId=save.id;
+    if(typeof window.FOOTBALL_FORTUNE_LOAD_BOARD==='function')window.FOOTBALL_FORTUNE_LOAD_BOARD(save.board||[]);
+    state=ffClone(save.state);state.busy=false;state.quickSimulating=false;
+    updateM95TargetDisplay();updateScore();updateClock();placeTokens();
+    const feed=$('.live-report-feed');if(feed)feed.innerHTML=save.feedHTML||'';
+    lastReportCommentary=feed?.querySelector('.report-body')?.textContent?.trim()||'';
+    ffRestorePhaseUI();updateStandardDiceAvailability();
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{placeTokens();try{window.FOOTBALL_FORTUNE_DRAW_LOCKED_ROUTE?.();}catch(e){}}));
+    return true;
+  }
+  function ffStartNewFriendly(){ffSaveEnabled=true;ffActiveSaveId=null;resetGame();ffScheduleAutosave('kickoff');}
+
+  window.FOOTBALL_FORTUNE_SAVE_GAME=()=>{const saved=ffSaveGame('manual');if(saved)ffShowSaveToast('Friendly saved');return saved;};
+  window.FOOTBALL_FORTUNE_LIST_SAVES=()=>ffReadSaves().sort((a,b)=>new Date(b.updatedAt)-new Date(a.updatedAt));
+  window.FOOTBALL_FORTUNE_GET_RECENT_SAVE=()=>window.FOOTBALL_FORTUNE_LIST_SAVES().find(s=>s.status!=='finished')||null;
+  window.FOOTBALL_FORTUNE_LOAD_SAVE=ffLoadSave;
+  window.FOOTBALL_FORTUNE_DELETE_SAVE=(id)=>{const saves=ffReadSaves().filter(s=>s.id!==id);ffWriteSaves(saves);if(ffActiveSaveId===id)ffActiveSaveId=null;window.dispatchEvent(new CustomEvent('football-fortune-save-changed',{detail:{reason:'delete',id}}));};
+  window.FOOTBALL_FORTUNE_START_NEW_FRIENDLY=ffStartNewFriendly;
   function resetGame(){
+    if(ffSaveEnabled)ffActiveSaveId=null;
     closeMatchSummary();
     hideFinalResult();
     hideShootoutTransition();
