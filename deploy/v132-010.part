@@ -1547,6 +1547,124 @@ body.ffj-pre-game > .app{display:none!important}
 }
 #ffjLandingView .ff-menu-panel{z-index:20030!important}
 
+
+/* Friendly save / continue / load experience */
+#ffjContinueBtn:disabled{
+  cursor:not-allowed;
+  opacity:.55;
+  transform:none!important;
+  box-shadow:none!important;
+}
+.ffj-save-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:20050;
+  display:grid;
+  place-items:center;
+  padding:24px;
+  background:rgba(8,25,38,.48);
+  backdrop-filter:blur(8px);
+}
+.ffj-save-backdrop.hidden{display:none!important}
+.ffj-save-panel{
+  width:min(820px,calc(100vw - 36px));
+  max-height:min(760px,calc(100dvh - 48px));
+  overflow:hidden;
+  border-radius:26px;
+  background:#f8fbfd;
+  border:1px solid #d7e2ea;
+  box-shadow:0 30px 90px rgba(10,36,58,.28);
+  display:flex;
+  flex-direction:column;
+}
+.ffj-save-head{
+  display:flex;
+  justify-content:space-between;
+  gap:24px;
+  padding:28px 30px 22px;
+  border-bottom:1px solid #dce6ed;
+  background:#fff;
+}
+.ffj-save-kicker{
+  color:#2c6797;
+  font-size:11px;
+  font-weight:950;
+  letter-spacing:1.4px;
+}
+.ffj-save-head h2{
+  margin:7px 0 7px;
+  color:#0b3558;
+  font-size:34px;
+  letter-spacing:-1px;
+}
+.ffj-save-head p{margin:0;color:#6b8193;line-height:1.45}
+.ffj-save-close{
+  flex:0 0 42px;
+  width:42px;height:42px;
+  border-radius:50%;
+  border:1px solid #ccd9e3;
+  background:#fff;color:#17385f;
+  font-size:24px;
+}
+.ffj-save-list{
+  padding:18px;
+  overflow:auto;
+  display:grid;
+  gap:12px;
+}
+.ffj-save-empty{
+  padding:42px 22px;
+  text-align:center;
+  color:#718596;
+}
+.ffj-save-row{
+  display:grid;
+  grid-template-columns:56px minmax(0,1fr) auto;
+  gap:16px;
+  align-items:center;
+  padding:18px;
+  border:1px solid #d7e3eb;
+  border-radius:18px;
+  background:#fff;
+}
+.ffj-save-icon{
+  width:52px;height:52px;border-radius:15px;
+  display:grid;place-items:center;
+  background:#edf7ff;border:1px solid #b8d9f5;
+  font-size:25px;
+}
+.ffj-save-copy strong{
+  display:block;color:#0b3558;font-size:18px;
+}
+.ffj-save-meta{
+  margin-top:5px;color:#62798c;font-size:13px;line-height:1.45;
+}
+.ffj-save-actions{display:flex;gap:8px;align-items:center}
+.ffj-save-load,.ffj-save-delete{
+  min-height:38px;border-radius:10px;padding:0 14px;font-weight:850;
+}
+.ffj-save-load{border:1px solid #2f8fe8;background:#2f8fe8;color:#fff}
+.ffj-save-delete{border:1px solid #d8e2e9;background:#fff;color:#9f2d2d}
+.ff-save-toast{
+  position:fixed;
+  z-index:30000;
+  right:24px;
+  bottom:24px;
+  padding:12px 16px;
+  border-radius:12px;
+  background:#123a5c;
+  color:#fff;
+  font-weight:850;
+  box-shadow:0 12px 30px rgba(0,0,0,.22);
+  transition:opacity .2s ease,transform .2s ease;
+}
+.ff-save-toast.hide{opacity:0;transform:translateY(8px)}
+@media(max-width:650px){
+  .ffj-save-row{grid-template-columns:46px 1fr}
+  .ffj-save-actions{grid-column:2}
+  .ffj-save-head{padding:22px}
+}
+
 </style>
 </head>
 <body class="ffj-pre-game">
