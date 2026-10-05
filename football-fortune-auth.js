@@ -186,7 +186,9 @@
       saveCloudSession(data);
       saveProfile(metadataToProfile(data.user, email));
       message('#ffjLoginMessage', '');
+      button.disabled = false;
       rerunOriginal(button);
+      return;
     } catch (err) {
       {
         const raw = String(err.message || '');
@@ -233,7 +235,9 @@
         return;
       }
       message('#ffjSignupMessage', '');
+      button.disabled = false;
       rerunOriginal(button);
+      return;
     } catch (err) {
       const text = String(err.message || '');
       message(
