@@ -159,7 +159,6 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
         </div>
       </main>
       <aside class="ffj-mode-visual" aria-label="Football Fortune players">
-        <button class="ffj-close ffj-mode-close-floating" id="ffjModeClose" type="button" aria-label="Close">×</button>
         <div class="ffj-mode-art" id="ffjModeArt"></div>
       </aside>
     </div>
@@ -169,7 +168,7 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
 
 <div class="app">
   <header class="ff-appbar">
-    <div class="ff-appbar-title">Friendly: Match Day</div>
+    <div class="ff-appbar-title" id="ffMatchTitle">Friendly: Match Day</div>
     <div class="ff-appbar-actions">
       <button class="ghost" id="quickSimBtn" type="button">⚡ Quick Sim</button>
       <button class="ghost" id="restartMatchBtn" type="button">New Match</button>
