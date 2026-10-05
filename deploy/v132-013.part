@@ -67,6 +67,7 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
     <div class="ffj-landing-wrap">
       <main class="ffj-landing-main">
         <div class="ffj-landing-inner">
+        <div class="ffj-landing-logo" aria-label="Football Fortune"></div>
         <div class="ffj-eyebrow">Your football story starts here</div>
         <h1 id="ffjWelcome">Welcome back!</h1>
         <p class="ffj-landing-sub">Choose how you want to continue your Football Fortune career.</p>
