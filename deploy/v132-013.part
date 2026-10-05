@@ -259,6 +259,7 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
           </div>
           <label class="ffj-country-select-wrap">
             <span class="sr-only" id="ffjTournamentTeamSr">Choose your team</span>
+            <span class="ffj-team-select-badge" id="ffjTournamentSelectedBadge" aria-hidden="true"></span>
             <select id="ffjTournamentCountry" class="ffj-country-select" aria-labelledby="ffjTournamentTeamLabel"></select>
           </label>
         </section>
