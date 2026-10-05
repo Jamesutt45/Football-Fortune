@@ -130,7 +130,15 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
       <div class="ff-menu-wrap">
         <button class="ff-menu-btn" id="ffMenuBtn" type="button" aria-expanded="false" aria-controls="ffMenuPanel">☰ Menu</button>
         <div class="ff-menu-panel hidden" id="ffMenuPanel" role="menu" aria-hidden="true">
-          <button class="ff-menu-item ff-menu-logout" id="ffLogoutBtn" type="button" role="menuitem">Log out</button>
+          <button class="ff-menu-item ff-menu-logout" id="ffLogoutBtn" type="button" role="menuitem">
+            <span class="ff-menu-item-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M10 5H6.5A2.5 2.5 0 0 0 4 7.5v9A2.5 2.5 0 0 0 6.5 19H10" stroke-width="2" stroke-linecap="round"/>
+                <path d="M13 8l4 4-4 4M17 12H9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span>Log out</span>
+          </button>
         </div>
       </div>
       <button class="ff-icon-btn ff-home-btn" type="button" aria-label="Home" title="Home">
