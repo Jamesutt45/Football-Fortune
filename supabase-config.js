@@ -1,4 +1,7 @@
 // Football Fortune cloud authentication configuration.
-// This file is safe to expose only with a Supabase publishable/anon key.
-// Never place a service_role key in browser code.
-window.FOOTBALL_FORTUNE_SUPABASE = window.FOOTBALL_FORTUNE_SUPABASE || {};
+// Browser-safe Supabase publishable key. Never place a service_role key here.
+window.FOOTBALL_FORTUNE_SUPABASE = {
+  url: "https://lmlqmcliobncymjotuko.supabase.co",
+  key: "sb_publishable_tFscbKNDbaKjzprU9YUIaw_8i1fJoVH",
+  redirectTo: window.location.origin + window.location.pathname
+};
