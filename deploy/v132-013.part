@@ -127,7 +127,12 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
     <div class="ff-appbar-actions">
       <button class="ghost" id="quickSimBtn" type="button">⚡ Quick Sim</button>
       <button class="ghost" id="restartMatchBtn" type="button">New Match</button>
-      <button class="ff-menu-btn" type="button">☰ Menu</button>
+      <div class="ff-menu-wrap">
+        <button class="ff-menu-btn" id="ffMenuBtn" type="button" aria-expanded="false" aria-controls="ffMenuPanel">☰ Menu</button>
+        <div class="ff-menu-panel hidden" id="ffMenuPanel" role="menu" aria-hidden="true">
+          <button class="ff-menu-item ff-menu-logout" id="ffLogoutBtn" type="button" role="menuitem">Log out</button>
+        </div>
+      </div>
       <button class="ff-icon-btn ff-home-btn" type="button" aria-label="Home" title="Home">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M3.5 10.5 12 3.5l8.5 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
