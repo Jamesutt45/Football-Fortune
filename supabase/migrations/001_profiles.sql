@@ -1,5 +1,9 @@
 -- Football Fortune user profiles
--- Run in Supabase after the project is provisioned.
+
+create schema if not exists private;
+revoke all on schema private from public;
+revoke all on schema private from anon;
+revoke all on schema private from authenticated;
 
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
@@ -19,21 +23,28 @@ create table if not exists public.profiles (
 
 alter table public.profiles enable row level security;
 
+grant select, update on public.profiles to authenticated;
+
 drop policy if exists "Users can view own profile" on public.profiles;
 create policy "Users can view own profile"
-on public.profiles for select
-using (auth.uid() = id);
+on public.profiles
+for select
+to authenticated
+using ((select auth.uid()) = id);
 
 drop policy if exists "Users can update own profile" on public.profiles;
 create policy "Users can update own profile"
-on public.profiles for update
-using (auth.uid() = id)
-with check (auth.uid() = id);
+on public.profiles
+for update
+to authenticated
+using ((select auth.uid()) = id)
+with check ((select auth.uid()) = id);
 
-create or replace function public.handle_new_user()
+create or replace function private.handle_new_user()
 returns trigger
 language plpgsql
-security definer set search_path = ''
+security definer
+set search_path = ''
 as $$
 begin
   insert into public.profiles (id, first_name, surname, full_name, gender)
@@ -49,7 +60,11 @@ begin
 end;
 $$;
 
+revoke all on function private.handle_new_user() from public;
+revoke all on function private.handle_new_user() from anon;
+revoke all on function private.handle_new_user() from authenticated;
+
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
 after insert on auth.users
-for each row execute procedure public.handle_new_user();
+for each row execute procedure private.handle_new_user();
