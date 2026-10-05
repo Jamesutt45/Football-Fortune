@@ -18,6 +18,8 @@
     $('#ffResultTitle').textContent=`${teamName(winner)} win!`;
     $('#ffResultScore').textContent=penWin?`${so.goals.blue}\u00a0–\u00a0${so.goals.red} PENS`:`${state.score.blue}\u00a0–\u00a0${state.score.red}`;
     $('#ffResultCopy').textContent=finalResultBrief();
+    const closeBtn=$('#ffResultCloseBtn');
+    if(closeBtn)closeBtn.textContent=getMatchMode()==='tournament'?'RETURN TO TOURNAMENT':'BACK TO MATCH';
     wrap.classList.remove('hidden');wrap.setAttribute('aria-hidden','false');
     $('#ffGameModal')?.classList.add('hidden');$('#ffGameModal')?.setAttribute('aria-hidden','true');
   }
@@ -330,7 +332,12 @@
     $('#ffDiceRestoreBtn').addEventListener('click',()=>{$('#ffDiceRestoreBtn').classList.add('hidden');$('#ffGameModal').classList.remove('hidden');$('#ffGameModal').setAttribute('aria-hidden','false');});
     $('#ffSummaryCloseBtn')?.addEventListener('click',closeMatchSummary);
     $('#ffResultSummaryBtn')?.addEventListener('click',showMatchSummary);
-    $('#ffResultCloseBtn')?.addEventListener('click',hideFinalResult);
+    $('#ffResultCloseBtn')?.addEventListener('click',()=>{
+      if(getMatchMode()==='tournament'&&window.FOOTBALL_FORTUNE_RETURN_TO_TOURNAMENT){
+        hideFinalResult();
+        window.FOOTBALL_FORTUNE_RETURN_TO_TOURNAMENT();
+      }else hideFinalResult();
+    });
     document.querySelectorAll('[data-pen-dir]').forEach(btn=>btn.addEventListener('click',()=>chooseShootoutDirection(btn.dataset.penDir)));
     $('#ffPenSummaryBtn')?.addEventListener('click',()=>{const host=$('#ffIntegratedPenalty');if(host){host.classList.add('hidden');host.setAttribute('aria-hidden','true');}showFinalResult();});
     $('#ffShootoutContinueBtn')?.addEventListener('click',()=>{if(state.phase==='pre-shootout')beginShootout();});
@@ -652,9 +659,20 @@
   function countryByName(name){
     return TOURNAMENT_COUNTRIES.find(c=>c.name===name)||{name:name||'TBC',flag:'⚪'};
   }
-  function teamRow(team,emptyLabel='Winner TBC'){
-    if(!team)return '<div class="ffj-bracket-team empty"><span class="ffj-flag">○</span><span>'+emptyLabel+'</span></div>';
-    return '<div class="ffj-bracket-team"><span class="ffj-flag">'+team.flag+'</span><span>'+team.name+'</span></div>';
+  function teamRow(team,emptyLabel='Winner TBC',score=null,stateClass=''){
+    if(!team)return '<div class="ffj-bracket-team empty"><span class="ffj-bracket-team-main"><span class="ffj-flag">○</span><span>'+emptyLabel+'</span></span></div>';
+    return '<div class="ffj-bracket-team '+stateClass+'"><span class="ffj-bracket-team-main"><span class="ffj-flag">'+team.flag+'</span><span>'+team.name+'</span></span>'+(score===null?'':'<span class="ffj-bracket-team-score">'+score+'</span>')+'</div>';
+  }
+  function tournamentMatchMarkup(m){
+    const played=!!m.winner;
+    const homeWinner=played&&m.winner?.name===m.home?.name;
+    const awayWinner=played&&m.winner?.name===m.away?.name;
+    const score=m.score||null;
+    let html=teamRow(m.home,'Winner TBC',score?score.home:null,homeWinner?'winner':played?'loser':'');
+    html+=teamRow(m.away,'Winner TBC',score?score.away:null,awayWinner?'winner':played?'loser':'');
+    if(score?.pens)html+='<div class="ffj-bracket-match-result">'+score.pens.home+'–'+score.pens.away+' on penalties</div>';
+    else if(played)html+='<div class="ffj-bracket-match-result">'+m.winner.name+' progress</div>';
+    return html;
   }
   function sideRoundMatchIndexes(roundIndex,side){
     const matches=tournamentState.rounds[roundIndex].matches;
@@ -681,11 +699,159 @@
       card.dataset.round=String(roundIndex);
       card.dataset.matchIndex=String(index);
       card.dataset.side=side;
-      card.innerHTML=teamRow(m.home)+teamRow(m.away);
+      const currentUserFixture=!m.winner&&roundIndex===tournamentState.currentRound&&m.home&&m.away&&(m.home.name===tournamentState.userCountry||m.away.name===tournamentState.userCountry);
+      if(currentUserFixture)card.classList.add('current-fixture');
+      card.innerHTML=tournamentMatchMarkup(m)+(currentUserFixture?'<button class="ffj-play-tournament-match" type="button" data-play-tournament-match="'+m.id+'">Play match →</button>':'');
       stack.appendChild(card);
     });
     return div;
   }
+
+  function tournamentCurrentUserMatch(){
+    if(!tournamentState)return null;
+    const round=tournamentState.rounds[tournamentState.currentRound];
+    if(!round)return null;
+    return round.matches.find(m=>!m.winner&&(m.home?.name===tournamentState.userCountry||m.away?.name===tournamentState.userCountry))||null;
+  }
+  function advanceTournamentWinner(roundIndex,matchIndex,winner){
+    const nextRound=tournamentState.rounds[roundIndex+1];
+    if(!nextRound)return;
+    const nextMatch=nextRound.matches[Math.floor(matchIndex/2)];
+    if(!nextMatch)return;
+    if(matchIndex%2===0)nextMatch.home={...winner};
+    else nextMatch.away={...winner};
+  }
+  function randomAIScore(){
+    let a=Math.floor(Math.random()*4),b=Math.floor(Math.random()*4);
+    let pens=null;
+    if(a===b){
+      let pa=3+Math.floor(Math.random()*4),pb=3+Math.floor(Math.random()*4);
+      if(pa===pb)pa++;
+      pens={home:pa,away:pb};
+    }
+    return {home:a,away:b,pens};
+  }
+  function simulateTournamentAIMatch(roundIndex,matchIndex,match){
+    if(!match||match.winner||!match.home||!match.away)return;
+    const r=randomAIScore();
+    let homeWins;
+    if(r.home!==r.away)homeWins=r.home>r.away;
+    else homeWins=r.pens.home>r.pens.away;
+    match.score=r;
+    match.winner={...(homeWins?match.home:match.away)};
+    match.simulated=true;
+    advanceTournamentWinner(roundIndex,matchIndex,match.winner);
+  }
+  function completeTournamentRoundIfReady(){
+    const round=tournamentState?.rounds?.[tournamentState.currentRound];
+    if(!round||!round.matches.every(m=>m.winner))return;
+    if(tournamentState.currentRound>=tournamentState.rounds.length-1){
+      tournamentState.champion={...round.matches[0].winner};
+      tournamentState.completed=true;
+      saveTournament();
+      return;
+    }
+    tournamentState.currentRound++;
+    saveTournament();
+  }
+  function simulateOtherTournamentFixtures(roundIndex,userMatchId){
+    const round=tournamentState.rounds[roundIndex];
+    round.matches.forEach((m,i)=>{
+      if(m.id!==userMatchId&&!m.winner)simulateTournamentAIMatch(roundIndex,i,m);
+    });
+  }
+  function playedTournamentResult(payload){
+    if(!tournamentState?.activeMatchId)return;
+    const roundIndex=tournamentState.activeRound;
+    const round=tournamentState.rounds[roundIndex];
+    const matchIndex=round?.matches?.findIndex(m=>m.id===tournamentState.activeMatchId)??-1;
+    if(matchIndex<0)return;
+    const match=round.matches[matchIndex];
+    if(match.winner)return;
+
+    const winnerTeam=[match.home,match.away].find(t=>t?.name===payload.winner);
+    if(!winnerTeam)return;
+    match.score={
+      home:Number(payload.homeScore)||0,
+      away:Number(payload.awayScore)||0,
+      pens:payload.penalties?{home:Number(payload.penalties.home)||0,away:Number(payload.penalties.away)||0}:null
+    };
+    match.winner={...winnerTeam};
+    match.playedByUser=true;
+    advanceTournamentWinner(roundIndex,matchIndex,match.winner);
+    simulateOtherTournamentFixtures(roundIndex,match.id);
+    tournamentState.activeMatchId=null;
+    tournamentState.activeRound=null;
+    tournamentState.lastResult={matchId:match.id,winner:match.winner.name,round:round.name};
+    completeTournamentRoundIfReady();
+
+    const userStillIn=!tournamentState.completed&&tournamentState.rounds
+      .slice(tournamentState.currentRound)
+      .some(r=>r.matches.some(m=>[m.home?.name,m.away?.name,m.winner?.name].includes(tournamentState.userCountry)));
+    if(match.winner.name!==tournamentState.userCountry&&!userStillIn)tournamentState.eliminated=true;
+    saveTournament();
+  }
+  function startTournamentFixture(match){
+    if(!tournamentState||!match?.home||!match?.away||match.winner)return;
+    const roundIndex=tournamentState.currentRound;
+    tournamentState.activeMatchId=match.id;
+    tournamentState.activeRound=roundIndex;
+    saveTournament();
+
+    localStorage.setItem('footballFortuneMatchMode','tournament');
+    const params=new URLSearchParams(window.location.search);
+    params.set('mode','tournament');
+    params.set('round',tournamentState.rounds[roundIndex].name.toLowerCase().replace(/\s+/g,'-'));
+    history.replaceState(null,'',window.location.pathname+'?'+params.toString());
+
+    hideTournamentScreens();
+    q('#ffjModeBackdrop')?.classList.add('hidden');
+    shell?.classList.add('hidden');
+    document.body.classList.remove('ffj-pre-game');
+
+    const names=document.querySelectorAll('.team-name');
+    if(names[0])names[0].textContent=match.home.name;
+    if(names[1])names[1].textContent=match.away.name;
+    const title=q('#ffMatchTitle');
+    if(title)title.textContent='Tournament · '+tournamentState.rounds[roundIndex].name;
+
+    q('#restartMatchBtn')?.setAttribute('disabled','true');
+    q('#restartMatchBtn')?.setAttribute('title','Tournament fixtures cannot be restarted as a new match');
+
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      try{window.FOOTBALL_FORTUNE_GENERATE_BOARD?.();}catch(e){}
+      try{if(typeof resetGame==='function')resetGame();}catch(e){}
+      try{window.FOOTBALL_FORTUNE_DRAW_LOCKED_ROUTE?.();}catch(e){}
+    }));
+  }
+  function returnToTournament(){
+    localStorage.setItem('footballFortuneMatchMode','friendly');
+    const params=new URLSearchParams(window.location.search);
+    params.delete('mode');params.delete('round');
+    const qs=params.toString();
+    history.replaceState(null,'',window.location.pathname+(qs?'?'+qs:''));
+
+    q('#ffResultBackdrop')?.classList.add('hidden');
+    q('#ffSummaryBackdrop')?.classList.add('hidden');
+    q('#ffShootoutTransition')?.classList.add('hidden');
+    q('#ffIntegratedPenalty')?.classList.add('hidden');
+    document.body.classList.remove('ff-result-open','ff-summary-open');
+    shell?.classList.remove('hidden');
+    document.body.classList.add('ffj-pre-game');
+
+    const names=document.querySelectorAll('.team-name');
+    if(names[0])names[0].textContent='Home Team';
+    if(names[1])names[1].textContent='Away Team';
+    q('#restartMatchBtn')?.removeAttribute('disabled');
+    q('#restartMatchBtn')?.removeAttribute('title');
+
+    renderTournament();
+    showTournamentPanel('bracket');
+    showTournamentScreen('hub');
+  }
+  window.FOOTBALL_FORTUNE_TOURNAMENT_MATCH_COMPLETE=playedTournamentResult;
+  window.FOOTBALL_FORTUNE_RETURN_TO_TOURNAMENT=returnToTournament;
+
   function renderTournament(){
     if(!tournamentState)return;
     const rounds=tournamentState.rounds;
@@ -694,6 +860,25 @@
     if(title)title.textContent='Tournament · '+roundNames[tournamentState.currentRound];
     q('#ffjTournamentHeading').textContent=tournamentState.competition;
     q('#ffjTournamentSummaryText').textContent=tournamentState.size+' countries · '+roundNames[0]+' to Final · Single elimination';
+    q('#ffjTournamentStatusBanner')?.remove();
+    const banner=document.createElement('div');
+    banner.id='ffjTournamentStatusBanner';
+    banner.className='ffj-tournament-status-banner';
+    if(tournamentState.completed){
+      banner.classList.add('champion');
+      banner.textContent=tournamentState.champion?.name===tournamentState.userCountry
+        ? '🏆 '+tournamentState.userCountry+' are the Fortune Nations Cup champions!'
+        : '🏆 '+(tournamentState.champion?.name||'The winner')+' are the Fortune Nations Cup champions.';
+    }else if(tournamentState.eliminated){
+      banner.classList.add('eliminated');
+      banner.textContent=tournamentState.userCountry+' have been eliminated. You can still follow the remaining tournament bracket.';
+    }else{
+      const next=tournamentCurrentUserMatch();
+      banner.textContent=next&&next.home&&next.away
+        ? 'Next match: '+next.home.flag+' '+next.home.name+' vs '+next.away.flag+' '+next.away.name
+        : 'The tournament is ready for the next round.';
+    }
+    q('#ffjTournamentBracketPanel')?.insertBefore(banner,q('.ffj-bracket-scroll'));
     const user=countryByName(tournamentState.userCountry);
     q('#ffjUserCountryChip').innerHTML='<span class="ffj-flag">'+user.flag+'</span><span>'+user.name+'</span>';
 
@@ -715,7 +900,8 @@
     finalCol.style.gridColumn=String(sideRounds+1);
     finalCol.dataset.side='final';
     finalCol.dataset.round=String(rounds.length-1);
-    finalCol.innerHTML='<div class="ffj-bracket-round-title">Final</div><div class="ffj-bracket-match-stack"><div class="ffj-final-trophy">🏆</div><div class="ffj-bracket-match'+(([final.home?.name,final.away?.name,final.winner?.name].includes(tournamentState.userCountry))?' user-path':'')+'" data-match-id="'+final.id+'" data-round="'+(rounds.length-1)+'" data-match-index="0" data-side="final">'+teamRow(final.home,'Left finalist')+teamRow(final.away,'Right finalist')+'</div><div class="ffj-final-label">Champion</div></div>';
+    const finalUserFixture=!final.winner&&tournamentState.currentRound===rounds.length-1&&final.home&&final.away&&(final.home.name===tournamentState.userCountry||final.away.name===tournamentState.userCountry);
+    finalCol.innerHTML='<div class="ffj-bracket-round-title">Final</div><div class="ffj-bracket-match-stack"><div class="ffj-final-trophy">🏆</div><div class="ffj-bracket-match'+(([final.home?.name,final.away?.name,final.winner?.name].includes(tournamentState.userCountry))?' user-path':'')+(finalUserFixture?' current-fixture':'')+'" data-match-id="'+final.id+'" data-round="'+(rounds.length-1)+'" data-match-index="0" data-side="final">'+tournamentMatchMarkup(final)+(finalUserFixture?'<button class="ffj-play-tournament-match" type="button" data-play-tournament-match="'+final.id+'">Play final →</button>':'')+'</div><div class="ffj-final-label">'+(tournamentState.champion?('Champion · '+tournamentState.champion.flag+' '+tournamentState.champion.name):'Champion')+'</div></div>';
     grid.appendChild(finalCol);
 
     requestAnimationFrame(()=>requestAnimationFrame(drawTournamentLines));
@@ -787,6 +973,14 @@
     });
   }));
   q('#ffjGenerateTournamentBtn')?.addEventListener('click',createTournament);
+  q('#ffjBracketGrid')?.addEventListener('click',(e)=>{
+    const btn=e.target.closest('[data-play-tournament-match]');
+    if(!btn)return;
+    const matchId=btn.dataset.playTournamentMatch;
+    const round=tournamentState?.rounds?.[tournamentState.currentRound];
+    const match=round?.matches?.find(m=>m.id===matchId);
+    if(match)startTournamentFixture(match);
+  });
   q('#ffjTournamentBracketBtn')?.addEventListener('click',()=>showTournamentPanel('bracket'));
   q('#ffjTournamentScorersBtn')?.addEventListener('click',()=>showTournamentPanel('scorers'));
   q('#ffjTournamentAssistsBtn')?.addEventListener('click',()=>showTournamentPanel('assists'));
