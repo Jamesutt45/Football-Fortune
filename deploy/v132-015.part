@@ -403,29 +403,34 @@ KZX2zeTMJJcuXy5Ty3bSulUkmKhYKxlDK7du5k27ZtZDKZmOQiI2it0WEoxoR1n7SPKr4OG5xK6tDZ29
     else el.textContent='Friendly: Match Day';
   }
   const other=p=>p==='blue'?'red':'blue';
-  function playerSurname(){
-    const profile=window.FOOTBALL_FORTUNE_PLAYER_PROFILE||(()=>{
-      try{return JSON.parse(localStorage.getItem('footballFortunePlayerProfile')||'null');}
-      catch(e){return null;}
-    })();
+  function managerProfile(){
+    try{
+      return window.FOOTBALL_FORTUNE_PLAYER_PROFILE
+        || JSON.parse(localStorage.getItem('footballFortunePlayerProfile')||'null')
+        || {};
+    }catch(e){return {};}
+  }
+  function managerSurname(){
+    const profile=managerProfile();
     const surname=(profile?.surname||'').trim();
     if(surname)return surname;
     const full=(profile?.fullName||'').trim();
     if(full&&full!=='Player'){
       const parts=full.split(/\s+/);
-      return parts[parts.length-1]||'Player';
+      return parts[parts.length-1]||'the manager';
     }
-    return 'Player';
+    return 'the manager';
+  }
+  function managerPronouns(){
+    const profile=managerProfile();
+    return profile?.gender==='female'
+      ? {subject:'she',object:'her',possessive:'her'}
+      : {subject:'he',object:'him',possessive:'his'};
   }
   function teamName(p){
-    if(p==='blue')return playerSurname();
     const names=document.querySelectorAll('.team-name');
-    const raw=names[1]?.textContent||'Away Team';
-    return raw?.trim()||'Away Team';
-  }
-  function syncPlayerTeamLabel(){
-    const names=document.querySelectorAll('.team-name');
-    if(names[0])names[0].textContent=playerSurname();
+    const raw=p==='blue'?(names[0]?.textContent||'Home Team'):(names[1]?.textContent||'Away Team');
+    return raw?.trim()|| (p==='blue'?'Home Team':'Away Team');
   }
   const token=p=>p==='blue'?$('#bluePlayerToken'):$('#redPlayerToken');
   const node=id=>document.querySelector(`.minute-node[data-id="${id}"]`);
