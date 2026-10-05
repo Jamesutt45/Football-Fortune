@@ -232,15 +232,34 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
       <div class="ffj-tournament-setup-inner">
         <div class="ffj-tournament-kicker">TOURNAMENT</div>
         <h1>Create your tournament</h1>
-        <p class="ffj-tournament-intro">Choose your country and the size of the knockout draw. Every match must produce a winner.</p>
+        <p class="ffj-tournament-intro">Choose the kind of knockout competition you want to enter, select your team and set the draw size. Every match must produce a winner.</p>
 
         <section class="ffj-tournament-field">
           <div class="ffj-tournament-field-head">
-            <div><strong>Choose your country</strong><span>This is the team you will manage throughout the tournament.</span></div>
+            <div><strong>Tournament type</strong><span>Play an international tournament or take a club into a domestic or European cup.</span></div>
+          </div>
+          <div class="ffj-tournament-type-options" role="radiogroup" aria-label="Tournament type">
+            <button class="ffj-tournament-type-option selected" type="button" data-tournament-type="countries" aria-pressed="true">Countries</button>
+            <button class="ffj-tournament-type-option" type="button" data-tournament-type="clubs" aria-pressed="false">Clubs</button>
+          </div>
+          <div class="ffj-club-scope hidden" id="ffjClubScope">
+            <div class="ffj-tournament-field-head ffj-tournament-subhead">
+              <div><strong>Club competition</strong><span>Choose whether the draw stays domestic or includes clubs from across Europe.</span></div>
+            </div>
+            <div class="ffj-tournament-type-options" role="radiogroup" aria-label="Club competition">
+              <button class="ffj-tournament-type-option selected" type="button" data-club-scope="domestic" aria-pressed="true">Domestic</button>
+              <button class="ffj-tournament-type-option" type="button" data-club-scope="european" aria-pressed="false">European</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="ffj-tournament-field">
+          <div class="ffj-tournament-field-head">
+            <div><strong id="ffjTournamentTeamLabel">Your nation</strong><span id="ffjTournamentTeamHelp">Choose the nation you will manage throughout the tournament.</span></div>
           </div>
           <label class="ffj-country-select-wrap">
-            <span class="sr-only">Choose your country</span>
-            <select id="ffjTournamentCountry" class="ffj-country-select"></select>
+            <span class="sr-only" id="ffjTournamentTeamSr">Choose your team</span>
+            <select id="ffjTournamentCountry" class="ffj-country-select" aria-labelledby="ffjTournamentTeamLabel"></select>
           </label>
         </section>
 
@@ -269,8 +288,8 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
     </main>
     <aside class="ffj-tournament-setup-side">
       <div class="ffj-trophy-mark">🏆</div>
-      <strong>Fortune Nations Cup</strong>
-      <p>A single-elimination international tournament. Draws go to penalties and only one country can lift the trophy.</p>
+      <strong id="ffjTournamentSetupCompetitionName">Fortune Nations Cup</strong>
+      <p id="ffjTournamentSetupCompetitionCopy">A single-elimination international tournament. Draws go to penalties and only one nation can lift the trophy.</p>
       <div class="ffj-tournament-path-preview">
         <span>Round</span><i></i><span>Next round</span><i></i><span>Final</span>
       </div>
