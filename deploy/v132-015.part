@@ -396,7 +396,7 @@ KZX2zeTMJJcuXy5Ty3bSulUkmKhYKxlDK7du5k27ZtZDKZmOQiI2it0WEoxoR1n7SPKr4OG5xK6tDZ29
   }
   function drawNeedsShootout(){const m=getMatchMode();return m==='friendly'||m==='tournament';}
   function updateMatchModeTitle(){
-    const el=$('.ff-appbar-title'); if(!el)return;
+    const el=$('#ffMatchTitle'); if(!el)return;
     const m=getMatchMode();
     if(m==='tournament'){const round=new URLSearchParams(window.location.search).get('round');el.textContent=round?`Tournament: ${round.replace(/(^|[- ])\w/g,x=>x.toUpperCase())}`:'Tournament: Match Day';}
     else if(m==='season'){const game=new URLSearchParams(window.location.search).get('game');el.textContent=game?`Season: Match ${game}`:'Season: Match Day';}
