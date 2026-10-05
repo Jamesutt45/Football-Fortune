@@ -114,12 +114,12 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
           </button>
           <button class="ffj-home-card" id="ffjContinueBtn" type="button">
             <span class="ffj-card-icon">▶</span>
-            <span class="ffj-card-copy"><strong>Continue Recent</strong><span>Resume your most recent autosave.</span></span>
+            <span class="ffj-card-copy"><strong>Continue Recent</strong><span id="ffjContinueDetail">No recent Friendly save yet.</span></span>
             <span class="ffj-arrow">→</span>
           </button>
           <button class="ffj-home-card" id="ffjLoadBtn" type="button">
             <span class="ffj-card-icon">▣</span>
-            <span class="ffj-card-copy"><strong>Load Game</strong><span>Open one of your saved leagues, tournaments or matches.</span></span>
+            <span class="ffj-card-copy"><strong>Load Game</strong><span id="ffjLoadDetail">Open a saved Friendly with match time, score and date.</span></span>
             <span class="ffj-arrow">→</span>
           </button>
         </div>
@@ -130,6 +130,20 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
       </aside>
     </div>
   </section>
+
+  <div class="ffj-save-backdrop hidden" id="ffjLoadBackdrop" aria-hidden="true">
+    <section class="ffj-save-panel" role="dialog" aria-modal="true" aria-labelledby="ffjLoadTitle">
+      <div class="ffj-save-head">
+        <div>
+          <div class="ffj-save-kicker">SAVED GAMES</div>
+          <h2 id="ffjLoadTitle">Load a Friendly</h2>
+          <p>Pick a saved match to return to the exact score, minute, pitch and match report.</p>
+        </div>
+        <button class="ffj-save-close" id="ffjLoadCloseBtn" type="button" aria-label="Close">×</button>
+      </div>
+      <div class="ffj-save-list" id="ffjSaveList"></div>
+    </section>
+  </div>
 
   <div class="ffj-mode-backdrop hidden" id="ffjModeBackdrop">
     <header class="ff-appbar">
@@ -198,6 +212,10 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
       <div class="ff-menu-wrap">
         <button class="ff-menu-btn" id="ffMenuBtn" type="button" aria-expanded="false" aria-controls="ffMenuPanel">☰ Menu</button>
         <div class="ff-menu-panel hidden" id="ffMenuPanel" role="menu" aria-hidden="true">
+          <button class="ff-menu-item" id="ffSaveGameBtn" type="button" role="menuitem">
+            <span class="ff-menu-item-icon" aria-hidden="true">💾</span>
+            <span>Save Game</span>
+          </button>
           <button class="ff-menu-item ff-menu-logout" id="ffLogoutBtn" type="button" role="menuitem">
             <span class="ff-menu-item-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24">
