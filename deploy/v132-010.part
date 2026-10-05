@@ -1339,3 +1339,52 @@ body.ffj-pre-game > .app{display:none!important}
     height:calc(100dvh - 70px);
   }
 }
+
+/* Final mode-shell geometry: edge-to-edge directly beneath the shared app bar. */
+#ffjModeBackdrop{
+  width:100vw!important;
+  height:100dvh!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:0!important;
+}
+#ffjModeBackdrop > .ff-appbar{
+  width:100vw!important;
+  margin:0!important;
+}
+#ffjModeBackdrop .ffj-mode-shell{
+  position:relative;
+  width:100vw!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:0!important;
+  flex:1 1 auto;
+  height:auto!important;
+  grid-template-columns:minmax(0,50vw) minmax(0,50vw)!important;
+}
+#ffjModeBackdrop .ffj-mode-content,
+#ffjModeBackdrop .ffj-mode-visual{
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+}
+#ffjModeBackdrop .ffj-mode-visual{
+  overflow:hidden!important;
+  background:#eef3f7!important;
+}
+#ffjModeBackdrop .ffj-mode-art{
+  position:absolute!important;
+  inset:0!important;
+}
+#ffjModeBackdrop .ffj-mode-art img{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  object-fit:cover!important;
+  object-position:center bottom!important;
+}
+#ffjModeBackdrop .ffj-mode-close-floating{display:none!important}
