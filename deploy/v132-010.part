@@ -1799,6 +1799,32 @@ body.ffj-pre-game > .app{display:none!important}
   color:#748898;
   font-size:13px;
 }
+.ffj-tournament-type-options{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin-top:14px;
+}
+.ffj-tournament-type-option{
+  min-height:48px;
+  border:1px solid #cfdae3;
+  border-radius:13px;
+  background:#fff;
+  color:#17385f;
+  font:inherit;
+  font-size:15px;
+  font-weight:900;
+  cursor:pointer;
+}
+.ffj-tournament-type-option.selected{
+  border:2px solid #58a8eb;
+  background:#eaf6ff;
+  color:#0b3558;
+  box-shadow:0 8px 20px rgba(47,143,232,.10);
+}
+.ffj-club-scope{margin-top:18px;padding-top:16px;border-top:1px solid #e3eaf0}
+.ffj-club-scope.hidden{display:none}
+.ffj-tournament-subhead strong{font-size:15px}
 .ffj-country-select-wrap{display:block;margin-top:14px}
 .ffj-country-select{
   width:100%;
