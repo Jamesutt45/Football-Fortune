@@ -307,7 +307,20 @@
     shell?.classList.add('hidden');
     document.body.classList.remove('ffj-pre-game');
     const title=q('.ff-appbar-title'); if(title)title.textContent='Friendly: Match Day';
-    try{ if(typeof resetGame==='function')resetGame(); }catch(e){}
+
+    // The match board is hidden while the login/landing journey is open, so its
+    // route canvas initially measures at effectively 0px. Redraw it only after
+    // the board is visible so the black dotted path spans the full pitch.
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        try{
+          if(typeof window.FOOTBALL_FORTUNE_DRAW_LOCKED_ROUTE==='function'){
+            window.FOOTBALL_FORTUNE_DRAW_LOCKED_ROUTE();
+          }
+        }catch(e){}
+        try{ if(typeof resetGame==='function')resetGame(); }catch(e){}
+      });
+    });
   }
 
   q('#ffjLoginTab')?.addEventListener('click',()=>showAuthPane('ffjLoginPane'));
