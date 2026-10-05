@@ -150,12 +150,22 @@ KZX2zeTMJJcuXy5Ty3bSulUkmKhYKxlDK7du5k27ZtZDKZmOQiI2it0WEoxoR1n7SPKr4OG5xK6tDZ29
     updateReport(currentEvents);
     window.FOOTBALL_FORTUNE_CURRENT_BOARD=currentEvents.map(e=>({...e}));
   }
+  function loadBoard(events){
+    generation++;
+    clearBoard();
+    currentEvents=(Array.isArray(events)?events:[]).map(e=>({...e}));
+    currentEvents.forEach(addEvent);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>drawMovementPaths()));
+    updateReport(currentEvents);
+    window.FOOTBALL_FORTUNE_CURRENT_BOARD=currentEvents.map(e=>({...e}));
+  }
   document.addEventListener('DOMContentLoaded',()=>{
     generateBoard();
     document.getElementById('restartMatchBtn')?.addEventListener('click',()=>setTimeout(generateBoard,0));
     window.addEventListener('resize',()=>drawMovementPaths());
   });
   window.FOOTBALL_FORTUNE_GENERATE_BOARD=generateBoard;
+  window.FOOTBALL_FORTUNE_LOAD_BOARD=loadBoard;
   window.FOOTBALL_FORTUNE_RESOLVE_FORCED_MOVE=(eventId,type)=>{
     const event=(window.FOOTBALL_FORTUNE_CURRENT_BOARD||[]).find(e=>e.id===eventId&&e.type===type);
     return event?event.to:null;
