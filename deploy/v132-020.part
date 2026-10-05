@@ -582,21 +582,16 @@
     {name:'South Korea',flag:'🇰🇷'},{name:'Australia',flag:'🇦🇺'},{name:'Morocco',flag:'🇲🇦'},{name:'Nigeria',flag:'🇳🇬'}
   ];
   const DOMESTIC_CLUBS=[
-    {name:'Northbridge Rovers',flag:'🔵'},{name:'Calder City',flag:'🟡'},{name:'Mersey Crown',flag:'🔴'},{name:'Redhaven Athletic',flag:'⚪'},
-    {name:'Eastmoor FC',flag:'🟣'},{name:'Westbridge Town',flag:'🟢'},{name:'Southgate Albion',flag:'🔵'},{name:'Ironfield United',flag:'⚫'},
-    {name:'Kingswell City',flag:'🟠'},{name:'Oakchester FC',flag:'🟤'},{name:'Rivergate Athletic',flag:'🔷'},{name:'Stoneford Town',flag:'🔶'},
-    {name:'Blackmere FC',flag:'⚫'},{name:'Greenborough United',flag:'🟢'},{name:'Highfield Crown',flag:'🟡'},{name:'Portcastle FC',flag:'🔵'}
+    {name:'Manchester Albion',flag:'MA'},{name:'London Crown',flag:'LC'},{name:'Mersey United',flag:'MU'},{name:'North London',flag:'NL'},
+    {name:'West London',flag:'WL'},{name:'Birmingham Lions',flag:'BL'},{name:'Newcastle City',flag:'NC'},{name:'Leeds Athletic',flag:'LA'},
+    {name:'Sheffield Uniteds',flag:'SU'},{name:'Nottingham City',flag:'NT'},{name:'Brighton Royals',flag:'BR'},{name:'Southampton Athletic',flag:'SA'},
+    {name:'Bristol Cityside',flag:'BC'},{name:'Leicester Crown',flag:'LC'},{name:'Wolverhampton Gold',flag:'WG'},{name:'Everton Vale',flag:'EV'}
   ];
   const EUROPEAN_CLUBS=[
-    ...DOMESTIC_CLUBS,
-    {name:'Madrid Sol',flag:'🇪🇸'},{name:'Catalonia Stars',flag:'🇪🇸'},{name:'Sevilla Oro',flag:'🇪🇸'},
-    {name:'Milano Scala',flag:'🇮🇹'},{name:'Torino Aurora',flag:'🇮🇹'},{name:'Roma Imperiale',flag:'🇮🇹'},
-    {name:'Paris Lumière',flag:'🇫🇷'},{name:'Marseille Bleu',flag:'🇫🇷'},
-    {name:'Rhine Adler',flag:'🇩🇪'},{name:'Bavaria König',flag:'🇩🇪'},{name:'Berlin Unionia',flag:'🇩🇪'},
-    {name:'Amsterdam Oranje',flag:'🇳🇱'},{name:'Rotterdam Harbour',flag:'🇳🇱'},
-    {name:'Lisboa Navegantes',flag:'🇵🇹'},{name:'Porto Atlântico',flag:'🇵🇹'},
-    {name:'Bruges Royale',flag:'🇧🇪'},{name:'Vienna Imperial',flag:'🇦🇹'},{name:'Prague Lions',flag:'🇨🇿'},
-    {name:'Copenhagen North',flag:'🇩🇰'},{name:'Stockholm Crown',flag:'🇸🇪'}
+    {name:'Madrid',flag:'🇪🇸'},{name:'Paris',flag:'🇫🇷'},{name:'Rome',flag:'🇮🇹'},{name:'Milan',flag:'🇮🇹'},
+    {name:'Munich',flag:'🇩🇪'},{name:'Berlin',flag:'🇩🇪'},{name:'Amsterdam',flag:'🇳🇱'},{name:'Rotterdam',flag:'🇳🇱'},
+    {name:'Lisbon',flag:'🇵🇹'},{name:'Porto',flag:'🇵🇹'},{name:'Copenhagen',flag:'🇩🇰'},{name:'Stockholm',flag:'🇸🇪'},
+    {name:'Vienna',flag:'🇦🇹'},{name:'Prague',flag:'🇨🇿'},{name:'Brussels',flag:'🇧🇪'},{name:'Athens',flag:'🇬🇷'}
   ];
   let selectedTournamentSize=16;
   let selectedTournamentType='countries';
