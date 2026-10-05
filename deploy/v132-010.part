@@ -1389,6 +1389,118 @@ body.ffj-pre-game > .app{display:none!important}
   #ffjModeBackdrop .ffj-mode-visual{display:none}
 }
 
+
+/* Landing page aligned to the approved Choose Your Mode left-panel scale and feel. */
+#ffjLandingView .ffj-landing-main{
+  padding:clamp(34px,5vw,78px);
+  align-items:center;
+  justify-content:center;
+  background:
+    radial-gradient(circle at 12% 8%,rgba(47,143,232,.10),transparent 33%),
+    linear-gradient(145deg,#f9fbfd 0%,#eef4f8 100%);
+}
+#ffjLandingView .ffj-landing-inner{
+  width:min(760px,100%);
+  max-width:760px;
+  min-height:0;
+  margin:0;
+  padding:0;
+  justify-content:center;
+}
+#ffjLandingView .ffj-landing-logo{
+  width:min(300px,46%);
+  margin:0 0 28px;
+}
+#ffjLandingView .ffj-eyebrow{
+  margin:0 0 8px;
+  color:#2c6797;
+  font-size:12px;
+  font-weight:950;
+  letter-spacing:1.4px;
+  text-transform:uppercase;
+}
+#ffjLandingView .ffj-landing-main h1{
+  margin:0 0 12px;
+  color:#0b3558;
+  font-size:clamp(42px,4.6vw,68px);
+  line-height:.98;
+  letter-spacing:-2.2px;
+}
+#ffjLandingView .ffj-landing-sub{
+  margin:0 0 30px;
+  max-width:650px;
+  color:#62798c;
+  font-size:17px;
+  line-height:1.55;
+}
+#ffjLandingView .ffj-grid{
+  display:grid;
+  gap:14px;
+}
+#ffjLandingView .ffj-home-card{
+  min-height:128px;
+  padding:20px 24px;
+  grid-template-columns:58px minmax(0,1fr) auto;
+  gap:18px;
+  border:1px solid #d5e1ea;
+  border-radius:20px;
+  background:rgba(255,255,255,.92);
+  box-shadow:0 7px 20px rgba(30,65,94,.05);
+}
+#ffjLandingView .ffj-home-card.primary{
+  border:2px solid #58a8eb;
+  background:linear-gradient(100deg,#eaf6ff 0%,#fff 76%);
+  box-shadow:0 14px 34px rgba(47,143,232,.13);
+}
+#ffjLandingView .ffj-home-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 40px rgba(47,143,232,.14);
+}
+#ffjLandingView .ffj-card-icon{
+  width:54px;
+  height:54px;
+  border-radius:16px;
+  background:#f5f8fb;
+  border:1px solid #dce6ed;
+  font-size:28px;
+}
+#ffjLandingView .ffj-home-card.primary .ffj-card-icon{
+  background:#fff;
+  border-color:#b9dcf8;
+}
+#ffjLandingView .ffj-card-copy strong{
+  display:block;
+  margin:0;
+  font-size:21px;
+  color:#0b3558;
+}
+#ffjLandingView .ffj-card-copy span{
+  display:block;
+  margin-top:5px;
+  color:#6d8192;
+  font-size:13px;
+  line-height:1.45;
+}
+#ffjLandingView .ffj-arrow{
+  font-size:20px;
+  font-weight:900;
+  color:#2d7dae;
+}
+@media(max-width:1000px){
+  #ffjLandingView .ffj-landing-main{padding:42px 28px}
+  #ffjLandingView .ffj-landing-logo{width:min(280px,52%);margin-bottom:24px}
+}
+@media(max-width:600px){
+  #ffjLandingView .ffj-landing-main{padding:28px 18px}
+  #ffjLandingView .ffj-landing-main h1{font-size:40px}
+  #ffjLandingView .ffj-home-card{
+    min-height:112px;
+    padding:17px;
+    grid-template-columns:48px minmax(0,1fr) 20px;
+  }
+  #ffjLandingView .ffj-card-icon{width:46px;height:46px;font-size:24px}
+}
+
 </style>
 </head>
 <body class="ffj-pre-game">
