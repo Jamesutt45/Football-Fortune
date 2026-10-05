@@ -56,21 +56,8 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
 
   <section class="ffj-view" id="ffjContractView">
     <div class="ffj-contract-stage">
-      <div class="ffj-contract-art">
-        <div class="ffj-contract-logo" aria-label="Football Fortune"></div>
-        <div class="ffj-contract-paper" aria-label="Signed Football Fortune player contract">
-          <div class="ffj-contract-kicker">Official player agreement</div>
-          <h2>FOOTBALL FORTUNE CONTRACT</h2>
-          <div class="ffj-contract-row"><span>Player</span><strong id="ffjContractPlayer">Player Name</strong></div>
-          <div class="ffj-contract-row"><span>Deal</span><strong>Five-year contract</strong></div>
-          <div class="ffj-contract-row"><span>Status</span><strong>Officially signed</strong></div>
-          <div class="ffj-signature">
-            <strong class="ffj-signature-name" id="ffjContractSignature">Player Name</strong>
-            <span class="ffj-signature-label">Player signature</span>
-          </div>
-          <div class="ffj-signed-stamp">SIGNED</div>
-        </div>
-        <p class="ffj-contract-art-note">The journey starts here</p>
+      <div class="ffj-contract-art" aria-label="Football Fortune contract signing">
+        <img class="ffj-contract-signing-image" id="ffjContractSigningImage" src="assets/approved-contract-signing.svg" alt="Football Fortune player signing a contract">
       </div>
       <div class="ffj-contract-news">
         <div class="ffj-eyebrow">Transfer news</div>
