@@ -18,8 +18,12 @@
       if(!r.ok) throw new Error(file+' '+r.status);
       parts.push(await r.text());
     }
+    let html=parts.join('');
+    const cloudAuth='<script src="supabase-config.js"><\\/script><script src="football-fortune-auth.js"><\\/script>';
+    if(/<\\/body>/i.test(html)) html=html.replace(/<\\/body>/i,cloudAuth+'</body>');
+    else html+=cloudAuth;
     document.open();
-    document.write(parts.join(''));
+    document.write(html);
     document.close();
   }catch(err){
     document.body.innerHTML='<div class="loading">Football Fortune could not load. Please refresh.</div>';
