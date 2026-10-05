@@ -174,6 +174,10 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
     <div class="ffj-mode-shell">
       <main class="ffj-mode-content">
         <div class="ffj-mode-content-inner">
+          <button class="ffj-mode-back" id="ffjModeBackBtn" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/><path d="M8 12h11"/></svg>
+            <span>Back</span>
+          </button>
           <h2>Choose your mode</h2>
           <p class="ffj-mode-intro">Every Football Fortune story starts differently. Jump into a one-off match now, with Tournament and League ready to grow into your longer career.</p>
           <div class="ffj-modes">
