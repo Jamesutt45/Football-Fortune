@@ -110,6 +110,49 @@
     });
   }
 
+
+  function addPasswordToggle(inputId) {
+    const input = q(inputId);
+    if (!input || input.parentElement?.classList.contains('ff-password-wrap')) return;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'ff-password-wrap';
+    input.parentNode.insertBefore(wrap, input);
+    wrap.appendChild(input);
+
+    const toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'ff-password-toggle';
+    toggle.setAttribute('aria-label', 'Show password');
+    toggle.setAttribute('title', 'Show password');
+    toggle.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6S2.5 12 2.5 12Z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2.7" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>';
+    toggle.addEventListener('click', () => {
+      const showing = input.type === 'text';
+      input.type = showing ? 'password' : 'text';
+      toggle.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+      toggle.setAttribute('title', showing ? 'Show password' : 'Hide password');
+      toggle.classList.toggle('active', !showing);
+    });
+    wrap.appendChild(toggle);
+  }
+
+  const passwordStyle = document.createElement('style');
+  passwordStyle.textContent = `
+    .ff-password-wrap{position:relative}
+    .ff-password-wrap .ffj-input{padding-right:52px}
+    .ff-password-toggle{
+      position:absolute;right:10px;top:50%;transform:translateY(-50%);
+      width:38px;height:38px;border:0;border-radius:10px;background:transparent;
+      color:#6a7f96;display:grid;place-items:center;cursor:pointer
+    }
+    .ff-password-toggle:hover,.ff-password-toggle:focus-visible{background:#eef6ff;color:#245887;outline:none}
+    .ff-password-toggle svg{width:22px;height:22px}
+    .ff-password-toggle.active{color:#245887}
+  `;
+  document.head.appendChild(passwordStyle);
+  addPasswordToggle('#ffjLoginPassword');
+  addPasswordToggle('#ffjSignupPassword');
+
   function rerunOriginal(button) {
     bypass.add(button);
     button.click();
@@ -145,7 +188,16 @@
       message('#ffjLoginMessage', '');
       rerunOriginal(button);
     } catch (err) {
-      message('#ffjLoginMessage', err.status === 400 ? 'Email or password is incorrect.' : (err.message || 'Unable to sign in.'));
+      {
+        const raw = String(err.message || '');
+        if (/email not confirmed/i.test(raw)) {
+          message('#ffjLoginMessage', 'Please confirm your email first, then try logging in again.');
+        } else if (/invalid login credentials/i.test(raw) || err.status === 400) {
+          message('#ffjLoginMessage', 'Email or password is not recognised. Use the eye icon to check the password you entered.');
+        } else {
+          message('#ffjLoginMessage', raw || 'Unable to sign in.');
+        }
+      }
     } finally {
       button.disabled = false;
     }
