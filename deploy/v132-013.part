@@ -108,20 +108,29 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
   </section>
 
   <div class="ffj-mode-backdrop hidden" id="ffjModeBackdrop">
-    <header class="ffj-mode-topbar">
-      <div class="ffj-mode-brand" id="ffjModeBrand" aria-label="Football Fortune"></div>
-      <div class="ffj-mode-top-actions">
-        <button class="ffj-mode-top-btn ffj-mode-home" id="ffjModeHomeBtn" type="button" aria-label="Home">
-          <span aria-hidden="true">⌂</span><span class="ffj-btn-label">Home</span>
-        </button>
-        <div class="ffj-mode-menu-wrap">
-          <button class="ffj-mode-top-btn" id="ffjModeMenuBtn" type="button" aria-expanded="false">
-            <span aria-hidden="true">☰</span><span class="ffj-btn-label">Menu</span>
-          </button>
-          <div class="ffj-mode-menu-panel hidden" id="ffjModeMenuPanel" aria-hidden="true">
-            <button class="ffj-mode-menu-item" id="ffjModeLogoutBtn" type="button">↪ <span>Log out</span></button>
+    <header class="ff-appbar">
+      <div class="ff-appbar-title">New Game</div>
+      <div class="ff-appbar-actions">
+        <div class="ff-menu-wrap">
+          <button class="ff-menu-btn" id="ffjModeMenuBtn" type="button" aria-expanded="false" aria-controls="ffjModeMenuPanel">☰ Menu</button>
+          <div class="ff-menu-panel hidden" id="ffjModeMenuPanel" role="menu" aria-hidden="true">
+            <button class="ff-menu-item ff-menu-logout" id="ffjModeLogoutBtn" type="button" role="menuitem">
+              <span class="ff-menu-item-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M10 5H6.5A2.5 2.5 0 0 0 4 7.5v9A2.5 2.5 0 0 0 6.5 19H10" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M13 8l4 4-4 4M17 12H9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <span>Log out</span>
+            </button>
           </div>
         </div>
+        <button class="ff-icon-btn ff-home-btn" id="ffjModeHomeBtn" type="button" aria-label="Home" title="Home">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M3.5 10.5 12 3.5l8.5 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M5.5 9.5V20h13V9.5M9.5 20v-6h5v6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
       </div>
     </header>
     <div class="ffj-mode-shell">
