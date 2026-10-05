@@ -420,6 +420,18 @@
   });
   q('#ffjContractContinueBtn')?.addEventListener('click',showLanding);
 
+  // Always begin on Log In after a fresh open or browser refresh.
+  // Remembered details may be prefilled, but navigation never skips authentication.
+  const rememberedLogin=loadRememberedLogin();
+  const storedProfile=loadPlayerProfile();
+  if(storedProfile) savePlayerProfile(storedProfile);
+  if(rememberedLogin){
+    if(q('#ffjLoginEmail')) q('#ffjLoginEmail').value=rememberedLogin.email;
+    if(q('#ffjRememberMe')) q('#ffjRememberMe').checked=true;
+  }
+  showAuthPane('ffjLoginPane');
+  showJourneyView('ffjAuthView');
+
   const modeBackdrop=q('#ffjModeBackdrop');
   const modeMenuBtn=q('#ffjModeMenuBtn');
   const modeMenuPanel=q('#ffjModeMenuPanel');
