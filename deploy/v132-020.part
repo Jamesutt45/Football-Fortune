@@ -442,28 +442,28 @@
   function showLanding(){
     q('#ffjWelcome').textContent=`Welcome back, ${playerProfile.firstName || managerName || 'Player'}!`;
     showJourneyView('ffjLandingView');
+    setTimeout(refreshSaveLanding,0);
   }
-  function startFriendly(){
+  function enterFriendlyMatch(){
     q('#ffjModeBackdrop')?.classList.add('hidden');
+    q('#ffjLoadBackdrop')?.classList.add('hidden');
     shell?.classList.add('hidden');
     document.body.classList.remove('ffj-pre-game');
     const title=q('#ffMatchTitle'); if(title)title.textContent='Friendly: Match Day';
-
-    // The match board is hidden while the login/landing journey is open, so its
-    // route canvas initially measures at effectively 0px. Redraw it only after
-    // the board is visible so the black dotted path spans the full pitch.
-    requestAnimationFrame(()=>{
-      requestAnimationFrame(()=>{
-        try{
-          if(typeof window.FOOTBALL_FORTUNE_DRAW_LOCKED_ROUTE==='function'){
-            window.FOOTBALL_FORTUNE_DRAW_LOCKED_ROUTE();
-          }
-        }catch(e){}
-        try{ if(typeof resetGame==='function')resetGame(); }catch(e){}
-      });
-    });
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      try{window.FOOTBALL_FORTUNE_DRAW_LOCKED_ROUTE?.();}catch(e){}
+    }));
   }
-
+  function startFriendly(){
+    enterFriendlyMatch();
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      try{
+        if(typeof window.FOOTBALL_FORTUNE_START_NEW_FRIENDLY==='function')window.FOOTBALL_FORTUNE_START_NEW_FRIENDLY();
+        else if(typeof resetGame==='function')resetGame();
+      }catch(e){}
+      try{window.FOOTBALL_FORTUNE_DRAW_LOCKED_ROUTE?.();}catch(e){}
+    }));
+  }
   q('#ffjLoginTab')?.addEventListener('click',()=>showAuthPane('ffjLoginPane'));
   q('#ffjSignupTab')?.addEventListener('click',()=>showAuthPane('ffjSignupPane'));
   q('#ffjForgotBtn')?.addEventListener('click',()=>showAuthPane('ffjForgotPane'));
@@ -510,6 +510,43 @@
   });
   q('#ffjContractContinueBtn')?.addEventListener('click',showLanding);
 
+  function formatFriendlySave(save){
+    if(!save)return 'No recent Friendly save yet.';
+    const when=new Date(save.updatedAt),today=new Date();
+    const sameDay=when.toDateString()===today.toDateString();
+    const time=when.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    const dateLabel=sameDay?('Today '+time):(when.toLocaleDateString([], {day:'numeric',month:'short',year:'numeric'})+' '+time);
+    const status=save.status==='finished'?'Full time':(save.minute+"'");
+    return (save.homeTeam||'Home Team')+' '+(save.score?.blue??0)+'–'+(save.score?.red??0)+' '+(save.awayTeam||'Away Team')+' · '+status+' · '+dateLabel;
+  }
+  function refreshSaveLanding(){
+    const recent=window.FOOTBALL_FORTUNE_GET_RECENT_SAVE?.()||null;
+    const continueBtn=q('#ffjContinueBtn'),detail=q('#ffjContinueDetail');
+    if(continueBtn)continueBtn.disabled=!recent;
+    if(detail)detail.textContent=recent?formatFriendlySave(recent):'No unfinished Friendly save yet.';
+    const saves=window.FOOTBALL_FORTUNE_LIST_SAVES?.()||[];
+    const loadDetail=q('#ffjLoadDetail');
+    if(loadDetail)loadDetail.textContent=saves.length?(saves.length+' saved Friendly'+(saves.length===1?'':' matches')+' available.'):'No saved Friendly matches yet.';
+  }
+  function renderSaveList(){
+    const host=q('#ffjSaveList');if(!host)return;
+    const saves=window.FOOTBALL_FORTUNE_LIST_SAVES?.()||[];
+    host.innerHTML='';
+    if(!saves.length){host.innerHTML='<div class="ffj-save-empty">No Friendly saves yet. Start a match and Football Fortune will autosave as you play.</div>';return;}
+    saves.forEach(save=>{
+      const row=document.createElement('div');row.className='ffj-save-row';
+      const title=save.status==='finished'?'Finished Friendly':'Friendly in progress';
+      row.innerHTML='<div class="ffj-save-icon">⚽</div><div class="ffj-save-copy"><strong>'+title+'</strong><div class="ffj-save-meta">'+formatFriendlySave(save)+'</div></div><div class="ffj-save-actions"><button class="ffj-save-load" type="button" data-load-save="'+save.id+'">Load</button><button class="ffj-save-delete" type="button" data-delete-save="'+save.id+'">Delete</button></div>';
+      host.appendChild(row);
+    });
+  }
+  function openLoadGames(){
+    renderSaveList();
+    const modal=q('#ffjLoadBackdrop');modal?.classList.remove('hidden');modal?.setAttribute('aria-hidden','false');
+  }
+  function closeLoadGames(){
+    const modal=q('#ffjLoadBackdrop');modal?.classList.add('hidden');modal?.setAttribute('aria-hidden','true');
+  }
   // Always begin on Log In after a fresh open or browser refresh.
   // Remembered details may be prefilled, but navigation never skips authentication.
   const rememberedLogin=loadRememberedLogin();
@@ -587,9 +624,22 @@
 
   q('#ffjNewGameBtn')?.addEventListener('click',openModeSelect);
   q('#ffjModeClose')?.addEventListener('click',closeModeSelect);
-  q('#ffjContinueBtn')?.addEventListener('click',openModeSelect);
-  q('#ffjLoadBtn')?.addEventListener('click',openModeSelect);
   q('#ffjFriendlyBtn')?.addEventListener('click',startFriendly);
+  q('#ffjContinueBtn')?.addEventListener('click',()=>{
+    const save=window.FOOTBALL_FORTUNE_GET_RECENT_SAVE?.();if(!save)return;
+    enterFriendlyMatch();
+    requestAnimationFrame(()=>requestAnimationFrame(()=>window.FOOTBALL_FORTUNE_LOAD_SAVE?.(save.id)));
+  });
+  q('#ffjLoadBtn')?.addEventListener('click',openLoadGames);
+  q('#ffjLoadCloseBtn')?.addEventListener('click',closeLoadGames);
+  q('#ffjLoadBackdrop')?.addEventListener('click',(e)=>{if(e.target===q('#ffjLoadBackdrop'))closeLoadGames();});
+  q('#ffjSaveList')?.addEventListener('click',(e)=>{
+    const load=e.target.closest('[data-load-save]');
+    if(load){const id=load.dataset.loadSave;closeLoadGames();enterFriendlyMatch();requestAnimationFrame(()=>requestAnimationFrame(()=>window.FOOTBALL_FORTUNE_LOAD_SAVE?.(id)));return;}
+    const del=e.target.closest('[data-delete-save]');
+    if(del){window.FOOTBALL_FORTUNE_DELETE_SAVE?.(del.dataset.deleteSave);renderSaveList();refreshSaveLanding();}
+  });
+  window.addEventListener('football-fortune-save-changed',refreshSaveLanding);
 
   // Welcome landing shell controls.
   q('#ffjLandingHomeBtn')?.addEventListener('click',(e)=>{
@@ -641,6 +691,10 @@
     e.preventDefault();
     e.stopPropagation();
     logoutToLogin();
+  });
+
+  q('#ffSaveGameBtn')?.addEventListener('click',(e)=>{
+    e.preventDefault();e.stopPropagation();closeMatchMenu();window.FOOTBALL_FORTUNE_SAVE_GAME?.();
   });
 
   // Live-match shell controls.
