@@ -570,6 +570,7 @@ KZX2zeTMJJcuXy5Ty3bSulUkmKhYKxlDK7du5k27ZtZDKZmOQiI2it0WEoxoR1n7SPKr4OG5xK6tDZ29
         state.summaryEvents.push({player,title,commentary,minute:m,icon});
       }
     }
+    if(typeof ffScheduleAutosave==='function')ffScheduleAutosave('match-event');
   }
   function placeTokens(){
     const same=state.pos.blue===state.pos.red;
