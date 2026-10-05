@@ -1367,6 +1367,39 @@ body.ffj-pre-game > .app{display:none!important}
   width:min(760px,100%);
   margin:0;
 }
+#ffjModeBackdrop .ffj-mode-back{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  height:42px;
+  margin:0 0 22px;
+  padding:0 14px;
+  border:1px solid #c9dbe8;
+  border-radius:12px;
+  background:rgba(255,255,255,.78);
+  color:#315d7f;
+  font:inherit;
+  font-size:14px;
+  font-weight:850;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(30,65,94,.05);
+}
+#ffjModeBackdrop .ffj-mode-back:hover,
+#ffjModeBackdrop .ffj-mode-back:focus-visible{
+  background:#fff;
+  border-color:#9fc6e4;
+  color:#164f7d;
+  outline:none;
+}
+#ffjModeBackdrop .ffj-mode-back svg{
+  width:18px;
+  height:18px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
 #ffjModeBackdrop .ffj-mode-visual{
   position:relative;
   overflow:hidden;
