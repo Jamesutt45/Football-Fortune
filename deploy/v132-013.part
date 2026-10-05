@@ -108,27 +108,56 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
   </section>
 
   <div class="ffj-mode-backdrop hidden" id="ffjModeBackdrop">
-    <section class="ffj-mode-card">
-      <div class="ffj-mode-head">
-        <div><div class="ffj-eyebrow">New game</div><h2>Choose your mode</h2></div>
-        <button class="ffj-close" id="ffjModeClose" type="button">×</button>
-      </div>
-      <div class="ffj-modes">
-        <button class="ffj-mode active" id="ffjFriendlyBtn" type="button">
-          <div class="ffj-mode-icon">🤝</div><strong>Friendly</strong>
-          <p>Jump straight into a standalone match with the full Football Fortune pitch.</p>
-          <small>Play now</small>
+    <header class="ffj-mode-topbar">
+      <div class="ffj-mode-brand" id="ffjModeBrand" aria-label="Football Fortune"></div>
+      <div class="ffj-mode-top-actions">
+        <button class="ffj-mode-top-btn ffj-mode-home" id="ffjModeHomeBtn" type="button" aria-label="Home">
+          <span aria-hidden="true">⌂</span><span class="ffj-btn-label">Home</span>
         </button>
-        <div class="ffj-mode disabled">
-          <div class="ffj-mode-icon">🏆</div><strong>Tournament</strong>
-          <p>Progress through knockout rounds towards the trophy.</p><small>Coming later</small>
-        </div>
-        <div class="ffj-mode disabled">
-          <div class="ffj-mode-icon">📈</div><strong>League</strong>
-          <p>Build a career, win promotion and climb through the divisions.</p><small>Coming later</small>
+        <div class="ffj-mode-menu-wrap">
+          <button class="ffj-mode-top-btn" id="ffjModeMenuBtn" type="button" aria-expanded="false">
+            <span aria-hidden="true">☰</span><span class="ffj-btn-label">Menu</span>
+          </button>
+          <div class="ffj-mode-menu-panel hidden" id="ffjModeMenuPanel" aria-hidden="true">
+            <button class="ffj-mode-menu-item" id="ffjModeLogoutBtn" type="button">↪ <span>Log out</span></button>
+          </div>
         </div>
       </div>
-    </section>
+    </header>
+    <div class="ffj-mode-shell">
+      <main class="ffj-mode-content">
+        <div class="ffj-mode-content-inner">
+          <div class="ffj-mode-kicker">New game</div>
+          <h2>Choose your mode</h2>
+          <p class="ffj-mode-intro">Every Football Fortune story starts differently. Jump into a one-off match now, with Tournament and League ready to grow into your longer career.</p>
+          <div class="ffj-modes">
+            <button class="ffj-mode active" id="ffjFriendlyBtn" type="button">
+              <div class="ffj-mode-icon">🤝</div>
+              <div class="ffj-mode-copy"><strong>Friendly</strong><p>Play a standalone match on the full dynamic Football Fortune pitch.</p></div>
+              <div class="ffj-mode-cta">Play now →</div>
+            </button>
+            <div class="ffj-mode disabled">
+              <div class="ffj-mode-icon">🏆</div>
+              <div class="ffj-mode-copy"><strong>Tournament</strong><p>Battle through knockout rounds and chase the final trophy.</p></div>
+              <div class="ffj-mode-cta ffj-mode-disabled-label">Coming later</div>
+            </div>
+            <div class="ffj-mode disabled">
+              <div class="ffj-mode-icon">📈</div>
+              <div class="ffj-mode-copy"><strong>League</strong><p>Build your career, earn promotion and climb through the divisions.</p></div>
+              <div class="ffj-mode-cta ffj-mode-disabled-label">Coming later</div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <aside class="ffj-mode-visual" aria-label="Football Fortune players">
+        <button class="ffj-close ffj-mode-close-floating" id="ffjModeClose" type="button" aria-label="Close">×</button>
+        <div class="ffj-mode-visual-copy">
+          <strong>Your next football story starts here.</strong>
+          <span>Pick a mode, step onto the pitch and let every roll shape the match.</span>
+        </div>
+        <div class="ffj-mode-art" id="ffjModeArt"></div>
+      </aside>
+    </div>
   </div>
 </div>
 
