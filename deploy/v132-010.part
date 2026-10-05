@@ -1282,6 +1282,7 @@ body.ffj-pre-game > .app{display:none!important}
 
 
 /* v132 mode selection — corrected full-screen shell layout */
+#ffjModeBackdrop.hidden{display:none!important}
 #ffjModeBackdrop{
   position:fixed;
   inset:0;
