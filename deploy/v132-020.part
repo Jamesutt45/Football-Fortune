@@ -255,7 +255,31 @@
   const q=s=>document.querySelector(s);
   const shell=q('#ffJourneyShell');
   const views=['ffjAuthView','ffjContractView','ffjLandingView'];
+  const REMEMBER_KEY='footballFortuneRememberedLogin';
   let managerName='Player';
+
+  function loadRememberedLogin(){
+    try{
+      const saved=JSON.parse(localStorage.getItem(REMEMBER_KEY)||'null');
+      if(!saved?.remembered)return null;
+      return {
+        email:typeof saved.email==='string'?saved.email:'',
+        name:typeof saved.name==='string'&&saved.name.trim()?saved.name.trim():'Player'
+      };
+    }catch(e){return null;}
+  }
+  function saveRememberedLogin(email,name){
+    try{
+      localStorage.setItem(REMEMBER_KEY,JSON.stringify({
+        remembered:true,
+        email:email||'',
+        name:name||'Player'
+      }));
+    }catch(e){}
+  }
+  function clearRememberedLogin(){
+    try{localStorage.removeItem(REMEMBER_KEY);}catch(e){}
+  }
 
   function showJourneyView(id){
     shell?.classList.remove('hidden');
@@ -288,7 +312,10 @@
     const email=q('#ffjLoginEmail').value.trim();
     const pw=q('#ffjLoginPassword').value;
     if(!email||!pw){q('#ffjLoginMessage').textContent='Enter your email address and password.';return;}
-    managerName='Player';
+    const remembered=loadRememberedLogin();
+    managerName=remembered?.email===email&&remembered?.name?remembered.name:'Player';
+    if(q('#ffjRememberMe')?.checked) saveRememberedLogin(email,managerName);
+    else clearRememberedLogin();
     showLanding();
   });
 
@@ -299,6 +326,8 @@
     if(!name||!email||pw.length<8){q('#ffjSignupMessage').textContent='Enter your name, email and a password of at least 8 characters.';return;}
     managerName=name;
     q('#ffjContractName').textContent=`Welcome, ${managerName}!`;
+    // Keep the account identity available for future remembered logins; never store the password.
+    saveRememberedLogin(email,managerName);
     showJourneyView('ffjContractView');
   });
   document.querySelectorAll('[data-ffj-character]').forEach(btn=>btn.addEventListener('click',()=>{
@@ -322,6 +351,17 @@
   q('#ffjLoadBtn')?.addEventListener('click',()=>{
     q('#ffjModeBackdrop')?.classList.remove('hidden');
   });
+
+  // Restore a remembered browser session for a faster return experience.
+  const rememberedLogin=loadRememberedLogin();
+  if(rememberedLogin){
+    managerName=rememberedLogin.name;
+    if(q('#ffjLoginEmail'))q('#ffjLoginEmail').value=rememberedLogin.email;
+    if(q('#ffjRememberMe'))q('#ffjRememberMe').checked=true;
+    showLanding();
+  }else{
+    showJourneyView('ffjAuthView');
+  }
 
   // Existing authenticated Home control returns to the landing page.
   q('.ff-home-btn')?.addEventListener('click',(e)=>{
