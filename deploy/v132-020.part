@@ -583,9 +583,9 @@
   ];
   const DOMESTIC_CLUBS=[
     {name:'Manchester Albion',flag:'MA'},{name:'London Crown',flag:'LC'},{name:'Mersey United',flag:'MU'},{name:'North London',flag:'NL'},
-    {name:'West London',flag:'WL'},{name:'Birmingham Lions',flag:'BL'},{name:'Newcastle City',flag:'NC'},{name:'Leeds Athletic',flag:'LA'},
-    {name:'Sheffield Uniteds',flag:'SU'},{name:'Nottingham City',flag:'NT'},{name:'Brighton Royals',flag:'BR'},{name:'Southampton Athletic',flag:'SA'},
-    {name:'Bristol Cityside',flag:'BC'},{name:'Leicester Crown',flag:'LC'},{name:'Wolverhampton Gold',flag:'WG'},{name:'Everton Vale',flag:'EV'}
+    {name:'West London',flag:'WL'},{name:'Midlands Lions',flag:'ML'},{name:'Tyne United',flag:'TU'},{name:'Yorkshire Athletic',flag:'YA'},
+    {name:'Steel City',flag:'SC'},{name:'Trent City',flag:'TC'},{name:'Sussex Royals',flag:'SR'},{name:'Hampshire Athletic',flag:'HA'},
+    {name:'West Country',flag:'WC'},{name:'East Midlands',flag:'EM'},{name:'Black Country Gold',flag:'BG'},{name:'Lancashire Vale',flag:'LV'}
   ];
   const EUROPEAN_CLUBS=[
     {name:'Madrid',flag:'🇪🇸'},{name:'Paris',flag:'🇫🇷'},{name:'Rome',flag:'🇮🇹'},{name:'Milan',flag:'🇮🇹'},
@@ -659,14 +659,17 @@
     q('#ffjClubScope')?.classList.toggle('hidden',!clubMode);
     if(q('#ffjTournamentTeamLabel'))q('#ffjTournamentTeamLabel').textContent=clubMode?'Your club':'Your nation';
     if(q('#ffjTournamentTeamHelp'))q('#ffjTournamentTeamHelp').textContent=clubMode
-      ? 'Choose the club you will manage throughout the tournament.'
-      : 'Choose the nation you will manage throughout the tournament.';
+      ? 'Pick the club you will manage throughout the tournament.'
+      : 'Pick the nation you will manage throughout the tournament.';
+    if(q('#ffjTournamentPickerLabel'))q('#ffjTournamentPickerLabel').textContent=clubMode?'Selected club':'Selected nation';
     const meta=tournamentCompetitionMeta();
     if(q('#ffjTournamentSetupCompetitionName'))q('#ffjTournamentSetupCompetitionName').textContent=meta.name;
     if(q('#ffjTournamentSetupCompetitionCopy'))q('#ffjTournamentSetupCompetitionCopy').textContent=meta.copy;
     populateTournamentTeams();
   }
   function clubInitials(name){
+    const team=[...DOMESTIC_CLUBS,...EUROPEAN_CLUBS].find(t=>t.name===name);
+    if(team?.flag && !team.flag.includes('🇦') && team.flag.length<=3)return team.flag;
     return String(name||'FC').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();
   }
   function renderSelectedTournamentBadge(){
