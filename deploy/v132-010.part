@@ -2041,6 +2041,83 @@ body.ffj-pre-game > .app{display:none!important}
   .ffj-tournament-summary{align-items:flex-start;flex-direction:column}
 }
 
+
+/* Tournament match progression */
+.ffj-bracket-team{
+  justify-content:space-between;
+}
+.ffj-bracket-team-main{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.ffj-bracket-team-score{
+  flex:0 0 auto;
+  min-width:18px;
+  text-align:right;
+  color:#0b3558;
+  font-weight:950;
+}
+.ffj-bracket-team.winner{
+  background:#f0f9f4;
+  color:#145c3d;
+}
+.ffj-bracket-team.loser{
+  color:#91a0ab;
+}
+.ffj-bracket-match-result{
+  padding:5px 10px 7px;
+  border-top:1px solid #e5edf2;
+  color:#6c8191;
+  font-size:10px;
+  font-weight:850;
+  text-align:center;
+  text-transform:uppercase;
+  letter-spacing:.45px;
+}
+.ffj-play-tournament-match{
+  width:calc(100% - 16px);
+  min-height:34px;
+  margin:8px;
+  border:1px solid #2f8fe8;
+  border-radius:9px;
+  background:#2f8fe8;
+  color:#fff;
+  font:inherit;
+  font-size:11px;
+  font-weight:950;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  cursor:pointer;
+}
+.ffj-play-tournament-match:hover{background:#237ac0}
+.ffj-bracket-match.current-fixture{
+  border:2px solid #2f8fe8;
+  box-shadow:0 12px 28px rgba(47,143,232,.18);
+}
+.ffj-tournament-status-banner{
+  width:min(1600px,100%);
+  margin:0 auto 18px;
+  padding:13px 16px;
+  border:1px solid #c7dce9;
+  border-radius:14px;
+  background:#fff;
+  color:#365a73;
+  font-size:13px;
+  font-weight:800;
+}
+.ffj-tournament-status-banner.champion{
+  border-color:#e4c55a;
+  background:#fff9df;
+  color:#725500;
+}
+.ffj-tournament-status-banner.eliminated{
+  border-color:#e1c9c9;
+  background:#fff6f6;
+  color:#7e3e3e;
+}
+
 </style>
 </head>
 <body class="ffj-pre-game">
