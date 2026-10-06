@@ -752,9 +752,16 @@
   function countryByName(name){
     return [...TOURNAMENT_COUNTRIES,...DOMESTIC_CLUBS,...EUROPEAN_CLUBS].find(c=>c.name===name)||{name:name||'TBC',flag:'⚪'};
   }
+  function tournamentTeamMark(team){
+    if(!team)return '<span class="ffj-flag">○</span>';
+    if(tournamentState?.tournamentType==='clubs'){
+      return '<span class="ffj-bracket-club-badge">'+clubInitials(team.name)+'</span>';
+    }
+    return '<span class="ffj-flag">'+team.flag+'</span>';
+  }
   function teamRow(team,emptyLabel='Winner TBC',score=null,stateClass=''){
     if(!team)return '<div class="ffj-bracket-team empty"><span class="ffj-bracket-team-main"><span class="ffj-flag">○</span><span>'+emptyLabel+'</span></span></div>';
-    return '<div class="ffj-bracket-team '+stateClass+'"><span class="ffj-bracket-team-main"><span class="ffj-flag">'+team.flag+'</span><span>'+team.name+'</span></span>'+(score===null?'':'<span class="ffj-bracket-team-score">'+score+'</span>')+'</div>';
+    return '<div class="ffj-bracket-team '+stateClass+'"><span class="ffj-bracket-team-main">'+tournamentTeamMark(team)+'<span>'+team.name+'</span></span>'+(score===null?'':'<span class="ffj-bracket-team-score">'+score+'</span>')+'</div>';
   }
   function tournamentMatchMarkup(m){
     const played=!!m.winner;
@@ -986,6 +993,7 @@
     const title=q('#ffjTournamentTitle');
     if(title)title.textContent='Tournament · '+roundNames[tournamentState.currentRound];
     q('#ffjTournamentHeading').textContent=tournamentState.competition;
+    if(q('#ffjTournamentKicker'))q('#ffjTournamentKicker').textContent=tournamentState.competition.toUpperCase();
     q('#ffjTournamentSummaryText').textContent=tournamentState.size+' '+(tournamentState.participantNoun||'countries')+' · '+roundNames[0]+' to Final · Single elimination';
     q('#ffjTournamentStatusBanner')?.remove();
     const banner=document.createElement('div');
@@ -1009,7 +1017,9 @@
     }
     q('#ffjTournamentBracketPanel')?.insertBefore(banner,q('.ffj-bracket-scroll'));
     const user=countryByName(tournamentState.userCountry);
-    q('#ffjUserCountryChip').innerHTML='<span class="ffj-flag">'+user.flag+'</span><span>'+user.name+'</span>';
+    q('#ffjUserCountryChip').innerHTML=tournamentState.tournamentType==='clubs'
+      ? '<span class="ffj-bracket-club-badge">'+clubInitials(user.name)+'</span><span>'+user.name+'</span>'
+      : '<span class="ffj-flag">'+user.flag+'</span><span>'+user.name+'</span>';
 
     const grid=q('#ffjBracketGrid');if(!grid)return;
     grid.innerHTML='';
