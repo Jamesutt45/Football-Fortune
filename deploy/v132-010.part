@@ -3114,6 +3114,126 @@ body.ffj-pre-game > .app{display:none!important}
   #ffjTournamentHub .ffj-champion-card{top:calc(50% + 92px);width:230px}
 }
 
+
+/* Tournament tree UI audit refinements */
+#ffjTournamentHub .ffj-bracket{
+  background:linear-gradient(180deg,#fff 0%,#fbfdff 100%);
+}
+#ffjTournamentHub .ffj-bracket-grid{
+  column-gap:clamp(52px,4.3vw,84px);
+}
+#ffjTournamentHub .ffj-tree-team-card{
+  width:210px;
+  min-height:58px;
+  padding:0 12px;
+  border-color:#cfdee9;
+  border-radius:12px;
+  box-shadow:0 5px 14px rgba(29,62,91,.055);
+}
+#ffjTournamentHub .ffj-tree-team-main{
+  gap:9px;
+}
+#ffjTournamentHub .ffj-tree-team-name{
+  font-size:11.5px;
+}
+#ffjTournamentHub .ffj-bracket-country-flag{
+  flex:0 0 auto;
+  width:24px;
+  height:18px;
+  object-fit:cover;
+  border-radius:3px;
+  box-shadow:0 0 0 1px rgba(22,59,91,.12);
+}
+#ffjTournamentHub .ffj-tree-placeholder-mark{
+  flex:0 0 auto;
+  width:24px;
+  text-align:center;
+  color:#9db0be;
+  font-size:18px;
+  line-height:1;
+}
+#ffjTournamentHub .ffj-bracket-club-badge{
+  width:26px;
+  height:26px;
+}
+#ffjTournamentHub .ffj-tree-team-card.user-team{
+  border:2px solid #2f8fe8;
+  background:#f7fbff;
+}
+#ffjTournamentHub .ffj-tree-inline-play{
+  flex:0 0 auto;
+  min-width:58px;
+  height:30px;
+  padding:0 10px;
+  border:0;
+  border-radius:8px;
+  background:#2f8fe8;
+  color:#fff;
+  font:inherit;
+  font-size:10px;
+  font-weight:950;
+  text-transform:uppercase;
+  letter-spacing:.35px;
+  cursor:pointer;
+}
+#ffjTournamentHub .ffj-tree-inline-play:hover{background:#237ac0}
+#ffjTournamentHub .ffj-tree-play-btn,
+#ffjTournamentHub .ffj-final-play-btn{
+  display:none !important;
+}
+#ffjTournamentHub .ffj-tree-round .ffj-bracket-round-title{
+  color:#607c91;
+  font-size:10px;
+  letter-spacing:1px;
+}
+#ffjTournamentHub .ffj-bracket-lines path{
+  stroke:#9fb6c7;
+  stroke-width:2;
+}
+#ffjTournamentHub .ffj-final-stage{
+  width:500px;
+  min-width:500px;
+  height:290px;
+}
+#ffjTournamentHub .ffj-finalist{
+  width:180px;
+}
+#ffjTournamentHub .ffj-finalist-left{left:0}
+#ffjTournamentHub .ffj-finalist-right{right:0}
+#ffjTournamentHub .ffj-final-centre{
+  width:90px;
+}
+#ffjTournamentHub .ffj-final-trophy{
+  font-size:62px;
+}
+#ffjTournamentHub .ffj-tree-final .ffj-bracket-round-title{
+  top:calc(50% - 142px);
+  font-size:13px;
+  letter-spacing:.9px;
+}
+#ffjTournamentHub .ffj-champion-card{
+  top:calc(50% + 94px);
+  width:220px;
+}
+#ffjTournamentHub .ffj-champion-card .ffj-tree-team-card{
+  width:220px;
+  min-height:52px;
+}
+#ffjTournamentHub .ffj-champion-label{
+  margin-bottom:7px;
+  font-size:10px;
+}
+@media(max-height:820px) and (min-width:1051px){
+  #ffjTournamentHub .ffj-tree-team-card{width:195px;min-height:50px}
+  #ffjTournamentHub .ffj-tree-team-name{font-size:10.5px}
+  #ffjTournamentHub .ffj-final-stage{width:450px;min-width:450px;height:250px}
+  #ffjTournamentHub .ffj-finalist{width:165px}
+  #ffjTournamentHub .ffj-final-trophy{font-size:54px}
+  #ffjTournamentHub .ffj-tree-final .ffj-bracket-round-title{top:calc(50% - 124px)}
+  #ffjTournamentHub .ffj-champion-card{top:calc(50% + 82px);width:205px}
+  #ffjTournamentHub .ffj-champion-card .ffj-tree-team-card{width:205px;min-height:48px}
+}
+
 </style>
 </head>
 <body class="ffj-pre-game">
