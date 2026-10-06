@@ -2738,6 +2738,78 @@ body.ffj-pre-game > .app{display:none!important}
   text-align:center;
 }
 
+
+/* Authoritative tournament tree geometry */
+#ffjTournamentHub .ffj-bracket-grid{
+  position:relative;
+  height:100%;
+  min-height:0;
+  grid-template-rows:minmax(0,1fr);
+  align-items:stretch;
+}
+#ffjTournamentHub .ffj-bracket-round{
+  position:relative;
+  height:auto;
+  min-height:0;
+  align-self:stretch;
+  overflow:visible;
+}
+#ffjTournamentHub .ffj-bracket-match-stack{
+  position:absolute;
+  inset:34px 0 10px;
+  height:auto;
+  min-height:0;
+  display:block;
+  overflow:visible;
+}
+#ffjTournamentHub .ffj-bracket-match-stack > .ffj-bracket-match{
+  position:absolute;
+  left:0;
+  right:0;
+  width:auto;
+  margin:0;
+  transform:translateY(-50%);
+}
+#ffjTournamentHub .ffj-bracket-round-title{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:24px;
+  min-height:24px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+#ffjTournamentHub .ffj-bracket-final .ffj-bracket-match-stack{
+  inset:0;
+}
+#ffjTournamentHub .ffj-bracket-final .ffj-bracket-match-stack > .ffj-bracket-match{
+  top:50% !important;
+  transform:translateY(-50%);
+}
+#ffjTournamentHub .ffj-bracket-final .ffj-bracket-round-title{
+  top:calc(50% - 130px);
+  height:22px;
+  min-height:22px;
+  align-items:center;
+}
+#ffjTournamentHub .ffj-bracket-final .ffj-final-trophy{
+  position:absolute;
+  left:50%;
+  top:calc(50% - 88px);
+  transform:translate(-50%,-50%);
+  margin:0;
+}
+#ffjTournamentHub .ffj-bracket-final .ffj-final-label{
+  position:absolute;
+  left:0;
+  right:0;
+  top:calc(50% + 58px);
+  margin:0;
+  text-align:center;
+}
+
 </style>
 </head>
 <body class="ffj-pre-game">
