@@ -750,7 +750,7 @@
     showTournamentScreen('hub');
   }
   function countryByName(name){
-    return [...TOURNAMENT_COUNTRIES,...EUROPEAN_CLUBS].find(c=>c.name===name)||{name:name||'TBC',flag:'⚪'};
+    return [...TOURNAMENT_COUNTRIES,...DOMESTIC_CLUBS,...EUROPEAN_CLUBS].find(c=>c.name===name)||{name:name||'TBC',flag:'⚪'};
   }
   function teamRow(team,emptyLabel='Winner TBC',score=null,stateClass=''){
     if(!team)return '<div class="ffj-bracket-team empty"><span class="ffj-bracket-team-main"><span class="ffj-flag">○</span><span>'+emptyLabel+'</span></span></div>';
@@ -853,6 +853,26 @@
       if(m.id!==userMatchId&&!m.winner)simulateTournamentAIMatch(roundIndex,i,m);
     });
   }
+  function simulateTournamentToChampion(){
+    if(!tournamentState||tournamentState.completed)return;
+    let safety=0;
+    while(!tournamentState.completed&&safety++<20){
+      const roundIndex=tournamentState.currentRound;
+      const round=tournamentState.rounds[roundIndex];
+      if(!round)break;
+      round.matches.forEach((m,i)=>{
+        if(!m.winner&&m.home&&m.away)simulateTournamentAIMatch(roundIndex,i,m);
+      });
+      const ready=round.matches.every(m=>m.winner);
+      if(!ready)break;
+      completeTournamentRoundIfReady();
+    }
+    if(tournamentState.completed){
+      tournamentState.autoSimmedAfterElimination=true;
+      tournamentState.autoSimmedAt=new Date().toISOString();
+    }
+    saveTournament();
+  }
   function playedTournamentResult(payload){
     if(!tournamentState?.activeMatchId)return;
     const roundIndex=tournamentState.activeRound;
@@ -881,7 +901,13 @@
     const userStillIn=!tournamentState.completed&&tournamentState.rounds
       .slice(tournamentState.currentRound)
       .some(r=>r.matches.some(m=>[m.home?.name,m.away?.name,m.winner?.name].includes(tournamentState.userCountry)));
-    if(match.winner.name!==tournamentState.userCountry&&!userStillIn)tournamentState.eliminated=true;
+    if(match.winner.name!==tournamentState.userCountry&&!userStillIn){
+      tournamentState.eliminated=true;
+      tournamentState.eliminatedRound=round.name;
+      // If the user's team is knocked out before the final, immediately quick-sim
+      // every remaining fixture so the tournament always has a visible champion.
+      if(roundIndex<tournamentState.rounds.length-1)simulateTournamentToChampion();
+    }
     saveTournament();
   }
   function startTournamentFixture(match){
@@ -969,7 +995,9 @@
       banner.classList.add('champion');
       banner.textContent=tournamentState.champion?.name===tournamentState.userCountry
         ? '🏆 '+tournamentState.userCountry+' are the '+tournamentState.competition+' champions!'
-        : '🏆 '+(tournamentState.champion?.name||'The winner')+' are the '+tournamentState.competition+' champions.';
+        : tournamentState.autoSimmedAfterElimination
+          ? '🏆 '+(tournamentState.champion?.name||'The winner')+' win the '+tournamentState.competition+'. Remaining fixtures were quick simulated after '+tournamentState.userCountry+' were eliminated.'
+          : '🏆 '+(tournamentState.champion?.name||'The winner')+' are the '+tournamentState.competition+' champions.';
     }else if(tournamentState.eliminated){
       banner.classList.add('eliminated');
       banner.textContent=tournamentState.userCountry+' have been eliminated. You can still follow the remaining tournament bracket.';
