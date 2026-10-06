@@ -289,12 +289,46 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
         </div>
       </div>
     </main>
-    <aside class="ffj-tournament-setup-side">
-      <div class="ffj-trophy-mark">🏆</div>
-      <strong id="ffjTournamentSetupCompetitionName">Fortune Nations Cup</strong>
-      <p id="ffjTournamentSetupCompetitionCopy">A single-elimination international tournament. Draws go to penalties and only one nation can lift the trophy.</p>
-      <div class="ffj-tournament-path-preview">
-        <span>Round</span><i></i><span>Next round</span><i></i><span>Final</span>
+    <aside class="ffj-tournament-setup-side" aria-label="Tournament preview">
+      <div class="ffj-tournament-hero" aria-hidden="true">
+        <div class="ffj-stadium-lights ffj-stadium-lights-left"></div>
+        <div class="ffj-stadium-lights ffj-stadium-lights-right"></div>
+        <div class="ffj-hero-bracket ffj-hero-bracket-left">
+          <span class="ffj-hero-team-badge">MA</span>
+          <span class="ffj-hero-team-badge">RB</span>
+          <span class="ffj-hero-team-badge">B</span>
+          <span class="ffj-hero-team-badge">NC</span>
+        </div>
+        <div class="ffj-hero-bracket ffj-hero-bracket-right">
+          <span class="ffj-hero-team-badge">PV</span>
+          <span class="ffj-hero-team-badge">LK</span>
+          <span class="ffj-hero-team-badge">ST</span>
+          <span class="ffj-hero-team-badge">AV</span>
+        </div>
+        <div class="ffj-hero-trophy">
+          <svg viewBox="0 0 260 310" focusable="false">
+            <defs>
+              <linearGradient id="ffCupBody" x1="0" x2="1"><stop offset="0" stop-color="#8bbce9"/><stop offset=".23" stop-color="#eef8ff"/><stop offset=".5" stop-color="#286ba7"/><stop offset=".78" stop-color="#f8fcff"/><stop offset="1" stop-color="#7faeda"/></linearGradient>
+              <linearGradient id="ffCupGold" x1="0" x2="1"><stop offset="0" stop-color="#d89724"/><stop offset=".5" stop-color="#ffe07a"/><stop offset="1" stop-color="#d78a18"/></linearGradient>
+            </defs>
+            <path d="M72 44h116l-10 83c-5 47-26 79-48 79s-43-32-48-79L72 44Z" fill="url(#ffCupBody)" stroke="#f4cf6d" stroke-width="6"/>
+            <path d="M79 57H48c-18 0-23 16-14 33 10 18 29 29 48 32" fill="none" stroke="url(#ffCupGold)" stroke-width="11" stroke-linecap="round"/>
+            <path d="M181 57h31c18 0 23 16 14 33-10 18-29 29-48 32" fill="none" stroke="url(#ffCupGold)" stroke-width="11" stroke-linecap="round"/>
+            <ellipse cx="130" cy="44" rx="59" ry="15" fill="#204f7f" stroke="url(#ffCupGold)" stroke-width="7"/>
+            <path d="M117 204h26v37h-26z" fill="url(#ffCupBody)"/>
+            <path d="M88 239h84l14 31H74l14-31Z" fill="url(#ffCupBody)" stroke="#f0c85f" stroke-width="4"/>
+            <rect x="58" y="268" width="144" height="24" rx="8" fill="#17385f" stroke="#f0c85f" stroke-width="4"/>
+            <path d="M130 91l13 20 24 5-16 18 2 25-23-10-23 10 2-25-16-18 24-5 13-20Z" fill="#d7ecff" stroke="#f6d269" stroke-width="3"/>
+          </svg>
+        </div>
+        <div class="ffj-hero-pitch"></div>
+      </div>
+      <div class="ffj-tournament-side-copy">
+        <strong id="ffjTournamentSetupCompetitionName">Fortune Nations Cup</strong>
+        <p id="ffjTournamentSetupCompetitionCopy">A single-elimination international tournament. Draws go to penalties and only one nation can lift the trophy.</p>
+        <div class="ffj-tournament-path-preview">
+          <span>Round</span><i></i><span>Next round</span><i></i><span>Final</span>
+        </div>
       </div>
     </aside>
   </div>
