@@ -781,32 +781,61 @@
       ? matches.slice(0,half).map((m,i)=>({m,index:i}))
       : matches.slice(half).map((m,i)=>({m,index:i+half}));
   }
+  function bracketTeamCard(team,score,stateClass='',extraClass=''){
+    const mark=tournamentTeamMark(team);
+    const name=team?.name||'Winner TBC';
+    return '<div class="ffj-tree-team-card '+(stateClass||'')+' '+(extraClass||'')+'">'+
+      '<span class="ffj-tree-team-main">'+mark+'<span class="ffj-tree-team-name">'+name+'</span></span>'+
+      (score===null||score===undefined?'':'<span class="ffj-tree-team-score">'+score+'</span>')+
+    '</div>';
+  }
   function renderBracketRound(roundIndex,side,colIndex){
     const round=tournamentState.rounds[roundIndex];
     const entries=sideRoundMatchIndexes(roundIndex,side);
     const div=document.createElement('div');
-    div.className='ffj-bracket-round';
+    div.className='ffj-bracket-round ffj-tree-round';
     div.dataset.side=side;
     div.dataset.round=String(roundIndex);
     div.style.gridColumn=String(colIndex);
     div.style.gridRow='1';
-    div.innerHTML='<div class="ffj-bracket-round-title">'+round.name+'</div><div class="ffj-bracket-match-stack"></div>';
-    const stack=div.querySelector('.ffj-bracket-match-stack');
-    const slotCount=Math.max(1,entries.length);
-    stack.style.setProperty('--round-match-count',String(slotCount));
-    entries.forEach(({m,index},slotIndex)=>{
-      const card=document.createElement('div');
-      card.style.top=(((slotIndex+.5)/slotCount)*100)+'%';
-      const userPath=[m.home?.name,m.away?.name,m.winner?.name].includes(tournamentState.userCountry);
-      card.className='ffj-bracket-match'+(userPath?' user-path':'');
-      card.dataset.matchId=m.id;
-      card.dataset.round=String(roundIndex);
-      card.dataset.matchIndex=String(index);
-      card.dataset.side=side;
-      const currentUserFixture=!m.winner&&roundIndex===tournamentState.currentRound&&m.home&&m.away&&(m.home.name===tournamentState.userCountry||m.away.name===tournamentState.userCountry);
-      if(currentUserFixture)card.classList.add('current-fixture');
-      card.innerHTML=tournamentMatchMarkup(m)+(currentUserFixture?'<button class="ffj-play-tournament-match" type="button" data-play-tournament-match="'+m.id+'">Play match →</button>':'');
-      stack.appendChild(card);
+    div.innerHTML='<div class="ffj-bracket-round-title">'+round.name+'</div><div class="ffj-tree-round-stage"></div>';
+    const stage=div.querySelector('.ffj-tree-round-stage');
+    const totalSlots=Math.max(1,entries.length*2);
+
+    entries.forEach(({m,index},entryIndex)=>{
+      const played=!!m.winner;
+      const currentUserFixture=!played&&roundIndex===tournamentState.currentRound&&m.home&&m.away&&(m.home.name===tournamentState.userCountry||m.away.name===tournamentState.userCountry);
+      ['home','away'].forEach((role,roleIndex)=>{
+        const team=m[role];
+        const slotIndex=entryIndex*2+roleIndex;
+        const y=((slotIndex+.5)/totalSlots)*100;
+        const won=played&&m.winner?.name===team?.name;
+        const stateClass=won?'winner':played?'loser':team?'':'empty';
+        const userClass=team?.name===tournamentState.userCountry?'user-team':'';
+        const card=document.createElement('div');
+        card.className='ffj-tree-slot '+userClass+(currentUserFixture?' current-pair':'');
+        card.dataset.roundSlot=roundIndex+'-'+index+'-'+role;
+        card.dataset.matchId=m.id;
+        card.dataset.side=side;
+        card.style.top=y+'%';
+        const score=m.score?m.score[role]:null;
+        card.innerHTML=bracketTeamCard(team,score,stateClass,userClass);
+        stage.appendChild(card);
+      });
+
+      if(currentUserFixture){
+        const userRole=m.home?.name===tournamentState.userCountry?'home':'away';
+        const userRoleIndex=userRole==='home'?0:1;
+        const userSlotIndex=entryIndex*2+userRoleIndex;
+        const userY=((userSlotIndex+.5)/totalSlots)*100;
+        const play=document.createElement('button');
+        play.className='ffj-play-tournament-match ffj-tree-play-btn';
+        play.type='button';
+        play.dataset.playTournamentMatch=m.id;
+        play.style.top='calc('+userY+'% + 40px)';
+        play.textContent='Play match →';
+        stage.appendChild(play);
+      }
     });
     return div;
   }
@@ -1039,29 +1068,43 @@
     const finalRound=rounds[rounds.length-1];
     const final=finalRound.matches[0];
     const finalCol=document.createElement('div');
-    finalCol.className='ffj-bracket-round ffj-bracket-final';
+    finalCol.className='ffj-bracket-round ffj-bracket-final ffj-tree-final';
     finalCol.style.gridColumn=String(sideRounds+1);
     finalCol.style.gridRow='1';
     finalCol.dataset.side='final';
     finalCol.dataset.round=String(rounds.length-1);
     const finalUserFixture=!final.winner&&tournamentState.currentRound===rounds.length-1&&final.home&&final.away&&(final.home.name===tournamentState.userCountry||final.away.name===tournamentState.userCountry);
-    finalCol.innerHTML='<div class="ffj-bracket-round-title">Final</div><div class="ffj-bracket-match-stack"><div class="ffj-final-trophy">🏆</div><div class="ffj-bracket-match'+(([final.home?.name,final.away?.name,final.winner?.name].includes(tournamentState.userCountry))?' user-path':'')+(finalUserFixture?' current-fixture':'')+'" data-match-id="'+final.id+'" data-round="'+(rounds.length-1)+'" data-match-index="0" data-side="final">'+tournamentMatchMarkup(final)+(finalUserFixture?'<button class="ffj-play-tournament-match" type="button" data-play-tournament-match="'+final.id+'">Play final →</button>':'')+'</div><div class="ffj-final-label">'+(tournamentState.champion?('Champion · '+tournamentState.champion.flag+' '+tournamentState.champion.name):'Champion')+'</div></div>';
+    const finalHomeWon=!!final.winner&&final.winner?.name===final.home?.name;
+    const finalAwayWon=!!final.winner&&final.winner?.name===final.away?.name;
+    const finalHomeState=finalHomeWon?'winner':final.winner?'loser':final.home?'':'empty';
+    const finalAwayState=finalAwayWon?'winner':final.winner?'loser':final.away?'':'empty';
+    const champion=tournamentState.champion||null;
+    finalCol.innerHTML=
+      '<div class="ffj-bracket-round-title">Final</div>'+
+      '<div class="ffj-final-stage">'+
+        '<div class="ffj-finalist ffj-finalist-left" data-final-slot="home">'+bracketTeamCard(final.home,final.score?.home??null,finalHomeState,final.home?.name===tournamentState.userCountry?'user-team':'')+'</div>'+
+        '<div class="ffj-final-centre"><div class="ffj-final-trophy">🏆</div></div>'+
+        '<div class="ffj-finalist ffj-finalist-right" data-final-slot="away">'+bracketTeamCard(final.away,final.score?.away??null,finalAwayState,final.away?.name===tournamentState.userCountry?'user-team':'')+'</div>'+
+        (finalUserFixture?'<button class="ffj-play-tournament-match ffj-final-play-btn" type="button" data-play-tournament-match="'+final.id+'">Play final →</button>':'')+
+        '<div class="ffj-champion-card '+(champion?'has-champion':'')+'">'+
+          '<div class="ffj-champion-label">Champion</div>'+
+          bracketTeamCard(champion,null,champion?'winner':'empty','')+
+        '</div>'+
+      '</div>';
     grid.appendChild(finalCol);
 
     requestAnimationFrame(()=>requestAnimationFrame(drawTournamentLines));
   }
   function drawTournamentLines(){
-    const bracket=q('#ffjBracket'),svg=q('#ffjBracketLines');if(!bracket||!svg||!tournamentState)return;
-    const br=bracket.getBoundingClientRect();
+    const bracket=q('#ffjBracket'),svg=q('#ffjBracketLines');
+    if(!bracket||!svg||!tournamentState)return;
+    const base=svg.getBoundingClientRect();
     svg.innerHTML='';
-    svg.setAttribute('viewBox','0 0 '+Math.max(1,br.width-40)+' '+Math.max(1,br.height-40));
-    const cards=[...bracket.querySelectorAll('.ffj-bracket-match')];
-    const byId=new Map(cards.map(el=>[el.dataset.matchId,el]));
-    const sideRounds=tournamentState.rounds.length-1;
+    svg.setAttribute('viewBox','0 0 '+Math.max(1,base.width)+' '+Math.max(1,base.height));
+
     const makePath=(source,dest,side)=>{
       if(!source||!dest)return;
       const s=source.getBoundingClientRect(),d=dest.getBoundingClientRect();
-      const base=svg.getBoundingClientRect();
       const sx=side==='right'?s.left-base.left:s.right-base.left;
       const sy=s.top-base.top+s.height/2;
       const dx=side==='right'?d.right-base.left:d.left-base.left;
@@ -1071,22 +1114,32 @@
       path.setAttribute('d','M '+sx+' '+sy+' H '+mid+' V '+dy+' H '+dx);
       svg.appendChild(path);
     };
-    for(let r=0;r<sideRounds-1;r++){
+
+    const lastSideRound=tournamentState.rounds.length-2;
+    for(let r=0;r<lastSideRound;r++){
       ['left','right'].forEach(side=>{
-        const sourceEntries=sideRoundMatchIndexes(r,side);
-        const destEntries=sideRoundMatchIndexes(r+1,side);
-        sourceEntries.forEach(({m},i)=>{
-          const dest=destEntries[Math.floor(i/2)]?.m;
-          if(dest)makePath(byId.get(m.id),byId.get(dest.id),side);
+        sideRoundMatchIndexes(r,side).forEach(({m,index})=>{
+          const destMatchIndex=Math.floor(index/2);
+          const destRole=index%2===0?'home':'away';
+          const dest=bracket.querySelector('[data-round-slot="'+(r+1)+'-'+destMatchIndex+'-'+destRole+'"]');
+          ['home','away'].forEach(role=>{
+            const source=bracket.querySelector('[data-round-slot="'+r+'-'+index+'-'+role+'"]');
+            makePath(source,dest,side);
+          });
         });
       });
     }
-    if(sideRounds>0){
-      const lastSideRound=sideRounds-1;
-      const final=tournamentState.rounds[tournamentState.rounds.length-1].matches[0];
+
+    if(lastSideRound>=0){
       ['left','right'].forEach(side=>{
-        const source=sideRoundMatchIndexes(lastSideRound,side)[0]?.m;
-        if(source)makePath(byId.get(source.id),byId.get(final.id),side);
+        sideRoundMatchIndexes(lastSideRound,side).forEach(({m,index})=>{
+          const finalRole=index%2===0?'home':'away';
+          const dest=bracket.querySelector('[data-final-slot="'+finalRole+'"]');
+          ['home','away'].forEach(role=>{
+            const source=bracket.querySelector('[data-round-slot="'+lastSideRound+'-'+index+'-'+role+'"]');
+            makePath(source,dest,side);
+          });
+        });
       });
     }
   }
