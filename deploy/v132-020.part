@@ -582,16 +582,18 @@
     {name:'South Korea',flag:'🇰🇷'},{name:'Australia',flag:'🇦🇺'},{name:'Morocco',flag:'🇲🇦'},{name:'Nigeria',flag:'🇳🇬'}
   ];
   const DOMESTIC_CLUBS=[
-    {name:'Manchester Albion',flag:'MA'},{name:'London Crown',flag:'LC'},{name:'Mersey United',flag:'MU'},{name:'North London',flag:'NL'},
-    {name:'West London',flag:'WL'},{name:'Midlands Lions',flag:'ML'},{name:'Tyne United',flag:'TU'},{name:'Yorkshire Athletic',flag:'YA'},{name:'White Rose United',flag:'WRU'},
-    {name:'Steel City',flag:'SC'},{name:'Trent City',flag:'TC'},{name:'Sussex Royals',flag:'SR'},{name:'Hampshire Athletic',flag:'HA'},
-    {name:'West Country',flag:'WC'},{name:'East Midlands',flag:'EM'},{name:'Black Country Gold',flag:'BG'},{name:'Lancashire Vale',flag:'LV'}
+    {name:'Black Country Gold',flag:'BG'},{name:'East Midlands',flag:'EM'},{name:'Hampshire Athletic',flag:'HA'},{name:'Lancashire Vale',flag:'LV'},
+    {name:'London Crown',flag:'LC'},{name:'Manchester Albion',flag:'MA'},{name:'Mersey United',flag:'MU'},{name:'Midlands Lions',flag:'ML'},
+    {name:'North London',flag:'NL'},{name:'Steel City',flag:'SC'},{name:'Sussex Royals',flag:'SR'},{name:'Trent City',flag:'TC'},
+    {name:'Tyne United',flag:'TU'},{name:'West Country',flag:'WC'},{name:'West London',flag:'WL'},{name:'White Rose United',flag:'WRU'},
+    {name:'Yorkshire Athletic',flag:'YA'}
   ];
   const EUROPEAN_CLUBS=[
-    {name:'Madrid',flag:'M'},{name:'Paris',flag:'P'},{name:'Rome',flag:'R'},{name:'Milan',flag:'MI'},
-    {name:'Munich',flag:'MU'},{name:'Berlin',flag:'B'},{name:'Amsterdam',flag:'A'},{name:'Rotterdam',flag:'RT'},
-    {name:'Lisbon',flag:'L'},{name:'Porto',flag:'P'},{name:'Copenhagen',flag:'C'},{name:'Stockholm',flag:'S'},
-    {name:'Vienna',flag:'V'},{name:'Prague',flag:'PR'},{name:'Brussels',flag:'B'},{name:'Athens',flag:'A'},{name:'London',flag:'L'},{name:'Manchester',flag:'M'}
+    {name:'Amsterdam',flag:'A'},{name:'Athens',flag:'A'},{name:'Berlin',flag:'B'},{name:'Brussels',flag:'B'},
+    {name:'Copenhagen',flag:'C'},{name:'Lisbon',flag:'L'},{name:'London',flag:'L'},{name:'Madrid',flag:'M'},
+    {name:'Manchester',flag:'M'},{name:'Milan',flag:'MI'},{name:'Munich',flag:'MU'},{name:'Paris',flag:'P'},
+    {name:'Porto',flag:'P'},{name:'Prague',flag:'PR'},{name:'Rome',flag:'R'},{name:'Rotterdam',flag:'RT'},
+    {name:'Stockholm',flag:'S'},{name:'Vienna',flag:'V'}
   ];
   let selectedTournamentSize=16;
   let selectedTournamentType='countries';
