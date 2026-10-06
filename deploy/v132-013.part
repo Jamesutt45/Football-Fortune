@@ -291,7 +291,7 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
     </main>
     <aside class="ffj-tournament-setup-side" aria-label="Tournament preview">
       <div class="ffj-tournament-image-panel" aria-hidden="true">
-        <img class="ffj-tournament-hero-image" src="assets/tournament-hero-approved.jpg" alt="">
+        <img class="ffj-tournament-hero-image" src="assets/tournament-hero-crisp.svg" alt="">
       </div>
       <div class="ffj-tournament-side-copy">
         <strong id="ffjTournamentSetupCompetitionName">Fortune Nations Cup</strong>
