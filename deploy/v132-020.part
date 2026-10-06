@@ -588,10 +588,10 @@
     {name:'West Country',flag:'WC'},{name:'East Midlands',flag:'EM'},{name:'Black Country Gold',flag:'BG'},{name:'Lancashire Vale',flag:'LV'}
   ];
   const EUROPEAN_CLUBS=[
-    {name:'Madrid',flag:'🇪🇸'},{name:'Paris',flag:'🇫🇷'},{name:'Rome',flag:'🇮🇹'},{name:'Milan',flag:'🇮🇹'},
-    {name:'Munich',flag:'🇩🇪'},{name:'Berlin',flag:'🇩🇪'},{name:'Amsterdam',flag:'🇳🇱'},{name:'Rotterdam',flag:'🇳🇱'},
-    {name:'Lisbon',flag:'🇵🇹'},{name:'Porto',flag:'🇵🇹'},{name:'Copenhagen',flag:'🇩🇰'},{name:'Stockholm',flag:'🇸🇪'},
-    {name:'Vienna',flag:'🇦🇹'},{name:'Prague',flag:'🇨🇿'},{name:'Brussels',flag:'🇧🇪'},{name:'Athens',flag:'🇬🇷'}
+    {name:'Madrid',flag:'M'},{name:'Paris',flag:'P'},{name:'Rome',flag:'R'},{name:'Milan',flag:'MI'},
+    {name:'Munich',flag:'MU'},{name:'Berlin',flag:'B'},{name:'Amsterdam',flag:'A'},{name:'Rotterdam',flag:'RT'},
+    {name:'Lisbon',flag:'L'},{name:'Porto',flag:'P'},{name:'Copenhagen',flag:'C'},{name:'Stockholm',flag:'S'},
+    {name:'Vienna',flag:'V'},{name:'Prague',flag:'PR'},{name:'Brussels',flag:'B'},{name:'Athens',flag:'A'}
   ];
   let selectedTournamentSize=16;
   let selectedTournamentType='countries';
@@ -903,6 +903,10 @@
     const names=document.querySelectorAll('.team-name');
     if(names[0])names[0].textContent=match.home.name;
     if(names[1])names[1].textContent=match.away.name;
+    const homeKit=q('.kit.home');
+    const awayKit=q('.kit.away');
+    if(homeKit)homeKit.textContent=selectedTournamentType==='clubs'?clubInitials(match.home.name):'H';
+    if(awayKit)awayKit.textContent=selectedTournamentType==='clubs'?clubInitials(match.away.name):'A';
     const title=q('#ffMatchTitle');
     if(title)title.textContent='Tournament · '+tournamentState.rounds[roundIndex].name;
 
@@ -933,6 +937,10 @@
     const names=document.querySelectorAll('.team-name');
     if(names[0])names[0].textContent='Home Team';
     if(names[1])names[1].textContent='Away Team';
+    const homeKit=q('.kit.home');
+    const awayKit=q('.kit.away');
+    if(homeKit)homeKit.textContent='H';
+    if(awayKit)awayKit.textContent='A';
     q('#restartMatchBtn')?.removeAttribute('disabled');
     q('#restartMatchBtn')?.removeAttribute('title');
 
