@@ -753,11 +753,12 @@
     return [...TOURNAMENT_COUNTRIES,...DOMESTIC_CLUBS,...EUROPEAN_CLUBS].find(c=>c.name===name)||{name:name||'TBC',flag:'⚪'};
   }
   function tournamentTeamMark(team){
-    if(!team)return '<span class="ffj-flag">○</span>';
+    if(!team)return '<span class="ffj-tree-placeholder-mark">○</span>';
     if(tournamentState?.tournamentType==='clubs'){
       return '<span class="ffj-bracket-club-badge">'+clubInitials(team.name)+'</span>';
     }
-    return '<span class="ffj-flag">'+team.flag+'</span>';
+    const code=COUNTRY_FLAG_CODES[team.name]||'gb-eng';
+    return '<img class="ffj-bracket-country-flag" src="https://flagcdn.com/32x24/'+code+'.png" alt="">';
   }
   function teamRow(team,emptyLabel='Winner TBC',score=null,stateClass=''){
     if(!team)return '<div class="ffj-bracket-team empty"><span class="ffj-bracket-team-main"><span class="ffj-flag">○</span><span>'+emptyLabel+'</span></span></div>';
@@ -781,12 +782,13 @@
       ? matches.slice(0,half).map((m,i)=>({m,index:i}))
       : matches.slice(half).map((m,i)=>({m,index:i+half}));
   }
-  function bracketTeamCard(team,score,stateClass='',extraClass=''){
+  function bracketTeamCard(team,score,stateClass='',extraClass='',actionHtml=''){
     const mark=tournamentTeamMark(team);
     const name=team?.name||'Winner TBC';
     return '<div class="ffj-tree-team-card '+(stateClass||'')+' '+(extraClass||'')+'">'+
       '<span class="ffj-tree-team-main">'+mark+'<span class="ffj-tree-team-name">'+name+'</span></span>'+
       (score===null||score===undefined?'':'<span class="ffj-tree-team-score">'+score+'</span>')+
+      (actionHtml||'')+
     '</div>';
   }
   function renderBracketRound(roundIndex,side,colIndex){
@@ -819,23 +821,12 @@
         card.dataset.side=side;
         card.style.top=y+'%';
         const score=m.score?m.score[role]:null;
-        card.innerHTML=bracketTeamCard(team,score,stateClass,userClass);
+        const action=currentUserFixture&&team?.name===tournamentState.userCountry
+          ? '<button class="ffj-tree-inline-play" type="button" data-play-tournament-match="'+m.id+'">Play →</button>'
+          : '';
+        card.innerHTML=bracketTeamCard(team,score,stateClass,userClass,action);
         stage.appendChild(card);
       });
-
-      if(currentUserFixture){
-        const userRole=m.home?.name===tournamentState.userCountry?'home':'away';
-        const userRoleIndex=userRole==='home'?0:1;
-        const userSlotIndex=entryIndex*2+userRoleIndex;
-        const userY=((userSlotIndex+.5)/totalSlots)*100;
-        const play=document.createElement('button');
-        play.className='ffj-play-tournament-match ffj-tree-play-btn';
-        play.type='button';
-        play.dataset.playTournamentMatch=m.id;
-        play.style.top='calc('+userY+'% + 40px)';
-        play.textContent='Play match →';
-        stage.appendChild(play);
-      }
     });
     return div;
   }
@@ -1079,13 +1070,16 @@
     const finalHomeState=finalHomeWon?'winner':final.winner?'loser':final.home?'':'empty';
     const finalAwayState=finalAwayWon?'winner':final.winner?'loser':final.away?'':'empty';
     const champion=tournamentState.champion||null;
+    const finalHomeAction=finalUserFixture&&final.home?.name===tournamentState.userCountry
+      ? '<button class="ffj-tree-inline-play" type="button" data-play-tournament-match="'+final.id+'">Play final →</button>' : '';
+    const finalAwayAction=finalUserFixture&&final.away?.name===tournamentState.userCountry
+      ? '<button class="ffj-tree-inline-play" type="button" data-play-tournament-match="'+final.id+'">Play final →</button>' : '';
     finalCol.innerHTML=
       '<div class="ffj-bracket-round-title">Final</div>'+
       '<div class="ffj-final-stage">'+
-        '<div class="ffj-finalist ffj-finalist-left" data-final-slot="home">'+bracketTeamCard(final.home,final.score?.home??null,finalHomeState,final.home?.name===tournamentState.userCountry?'user-team':'')+'</div>'+
+        '<div class="ffj-finalist ffj-finalist-left" data-final-slot="home">'+bracketTeamCard(final.home,final.score?.home??null,finalHomeState,final.home?.name===tournamentState.userCountry?'user-team':'',finalHomeAction)+'</div>'+
         '<div class="ffj-final-centre"><div class="ffj-final-trophy">🏆</div></div>'+
-        '<div class="ffj-finalist ffj-finalist-right" data-final-slot="away">'+bracketTeamCard(final.away,final.score?.away??null,finalAwayState,final.away?.name===tournamentState.userCountry?'user-team':'')+'</div>'+
-        (finalUserFixture?'<button class="ffj-play-tournament-match ffj-final-play-btn" type="button" data-play-tournament-match="'+final.id+'">Play final →</button>':'')+
+        '<div class="ffj-finalist ffj-finalist-right" data-final-slot="away">'+bracketTeamCard(final.away,final.score?.away??null,finalAwayState,final.away?.name===tournamentState.userCountry?'user-team':'',finalAwayAction)+'</div>'+
         '<div class="ffj-champion-card '+(champion?'has-champion':'')+'">'+
           '<div class="ffj-champion-label">Champion</div>'+
           bracketTeamCard(champion,null,champion?'winner':'empty','')+
