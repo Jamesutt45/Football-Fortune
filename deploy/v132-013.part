@@ -296,9 +296,7 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
       <div class="ffj-tournament-side-copy">
         <strong id="ffjTournamentSetupCompetitionName">Fortune Nations Cup</strong>
         <p id="ffjTournamentSetupCompetitionCopy">A single-elimination international tournament. Draws go to penalties and only one nation can lift the trophy.</p>
-        <div class="ffj-tournament-path-preview">
-          <span>Round</span><i></i><span>Next round</span><i></i><span>Final</span>
-        </div>
+
       </div>
     </aside>
   </div>
