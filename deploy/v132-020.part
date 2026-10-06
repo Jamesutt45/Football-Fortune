@@ -791,9 +791,11 @@
     div.style.gridColumn=String(colIndex);
     div.innerHTML='<div class="ffj-bracket-round-title">'+round.name+'</div><div class="ffj-bracket-match-stack"></div>';
     const stack=div.querySelector('.ffj-bracket-match-stack');
-    stack.style.setProperty('--round-match-count',String(Math.max(1,entries.length)));
-    entries.forEach(({m,index})=>{
+    const slotCount=Math.max(1,entries.length);
+    stack.style.setProperty('--round-match-count',String(slotCount));
+    entries.forEach(({m,index},slotIndex)=>{
       const card=document.createElement('div');
+      card.style.top=(((slotIndex+.5)/slotCount)*100)+'%';
       const userPath=[m.home?.name,m.away?.name,m.winner?.name].includes(tournamentState.userCountry);
       card.className='ffj-bracket-match'+(userPath?' user-path':'');
       card.dataset.matchId=m.id;
