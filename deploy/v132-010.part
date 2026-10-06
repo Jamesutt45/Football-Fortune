@@ -2444,6 +2444,21 @@ body.ffj-pre-game > .app{display:none!important}
   .ffj-tournament-side-copy{padding-bottom:24px}
 }
 
+
+/* Approved tournament hero image asset */
+#ffjTournamentSetup .ffj-tournament-setup-side{
+  background:
+    linear-gradient(180deg,rgba(6,38,74,0) 0 58%,rgba(6,38,74,.78) 66%,#06264a 78%,#06264a 100%),
+    url("assets/tournament-hero-approved.jpg") top center/100% auto no-repeat,
+    #06264a;
+}
+#ffjTournamentSetup .ffj-tournament-setup-side .ffj-tournament-hero{
+  display:none;
+}
+#ffjTournamentSetup .ffj-tournament-side-copy{
+  padding-bottom:36px;
+}
+
 </style>
 </head>
 <body class="ffj-pre-game">
