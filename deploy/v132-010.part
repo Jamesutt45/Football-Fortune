@@ -2810,6 +2810,90 @@ body.ffj-pre-game > .app{display:none!important}
   text-align:center;
 }
 
+
+/* Tournament bracket card refinement — separate team cards + clearer journey space */
+#ffjTournamentHub .ffj-bracket-grid{
+  column-gap:clamp(54px,5vw,96px);
+}
+#ffjTournamentHub .ffj-bracket-match{
+  width:min(230px,100%) !important;
+  min-height:0 !important;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  overflow:visible;
+}
+#ffjTournamentHub .ffj-bracket-round[data-side="left"] .ffj-bracket-match{
+  left:auto;
+  right:0;
+}
+#ffjTournamentHub .ffj-bracket-round[data-side="right"] .ffj-bracket-match{
+  left:0;
+  right:auto;
+}
+#ffjTournamentHub .ffj-bracket-final .ffj-bracket-match{
+  left:50% !important;
+  right:auto !important;
+  width:min(250px,100%) !important;
+  transform:translate(-50%,-50%) !important;
+}
+#ffjTournamentHub .ffj-bracket-team{
+  min-height:56px !important;
+  padding:0 14px;
+  border:1px solid #d4e0e8 !important;
+  border-radius:12px;
+  background:#fff;
+  box-shadow:0 6px 16px rgba(29,62,91,.06);
+}
+#ffjTournamentHub .ffj-bracket-team + .ffj-bracket-team{
+  margin-top:10px;
+  border-top:1px solid #d4e0e8 !important;
+}
+#ffjTournamentHub .ffj-bracket-team.winner{
+  background:#f0f9f4;
+  border-color:#b8ddca !important;
+}
+#ffjTournamentHub .ffj-bracket-team.loser{
+  background:#f7f9fb;
+}
+#ffjTournamentHub .ffj-bracket-match.user-path{
+  border:0;
+  box-shadow:none;
+}
+#ffjTournamentHub .ffj-bracket-match.current-fixture{
+  width:min(250px,100%) !important;
+  padding:8px;
+  border:2px solid #2f8fe8;
+  border-radius:14px;
+  background:#f8fcff;
+  box-shadow:0 12px 28px rgba(47,143,232,.16);
+}
+#ffjTournamentHub .ffj-play-tournament-match{
+  width:100%;
+  min-height:38px;
+  margin:10px 0 0;
+}
+#ffjTournamentHub .ffj-bracket-match-result{
+  margin-top:8px;
+  padding:5px 8px 0;
+  border-top:0;
+}
+#ffjTournamentHub .ffj-bracket-lines path{
+  stroke:#9eb7c9;
+  stroke-width:2.25;
+}
+#ffjTournamentHub .ffj-bracket-round[data-side="left"] .ffj-bracket-match-stack,
+#ffjTournamentHub .ffj-bracket-round[data-side="right"] .ffj-bracket-match-stack{
+  overflow:visible;
+}
+@media(max-height:820px) and (min-width:1051px){
+  #ffjTournamentHub .ffj-bracket-team{min-height:50px !important}
+  #ffjTournamentHub .ffj-bracket-team + .ffj-bracket-team{margin-top:8px}
+  #ffjTournamentHub .ffj-bracket-match{width:min(215px,100%) !important}
+  #ffjTournamentHub .ffj-bracket-match.current-fixture{width:min(235px,100%) !important}
+}
+
 </style>
 </head>
 <body class="ffj-pre-game">
