@@ -2240,6 +2240,210 @@ body.ffj-pre-game > .app{display:none!important}
   color:#7e3e3e;
 }
 
+
+/* Tournament setup redesign — compact no-scroll layout + cinematic hero */
+#ffjTournamentSetup .ffj-tournament-setup-shell{
+  grid-template-columns:minmax(680px,1.05fr) minmax(520px,.95fr);
+}
+#ffjTournamentSetup .ffj-tournament-setup-main{
+  align-items:center;
+  padding:24px clamp(30px,4vw,64px);
+  overflow:hidden;
+}
+#ffjTournamentSetup .ffj-tournament-setup-inner{width:min(760px,100%)}
+#ffjTournamentSetup .ffj-tournament-setup-inner h1{
+  margin:7px 0 8px;
+  font-size:clamp(42px,3.45vw,59px);
+}
+#ffjTournamentSetup .ffj-tournament-intro{
+  margin-bottom:16px;
+  font-size:15px;
+  line-height:1.4;
+}
+#ffjTournamentSetup .ffj-tournament-field{
+  margin-top:12px;
+  padding:14px 16px;
+  border-radius:16px;
+}
+#ffjTournamentSetup .ffj-tournament-field-head strong{font-size:15px}
+#ffjTournamentSetup .ffj-tournament-field-head span{font-size:12px;margin-top:2px}
+#ffjTournamentSetup .ffj-tournament-type-options{margin-top:10px;gap:9px}
+#ffjTournamentSetup .ffj-tournament-type-option{min-height:42px;border-radius:11px;font-size:14px}
+#ffjTournamentSetup .ffj-club-scope{
+  display:grid;
+  grid-template-columns:minmax(180px,.9fr) minmax(260px,1.1fr);
+  align-items:center;
+  gap:14px;
+  margin-top:12px;
+  padding-top:12px;
+}
+#ffjTournamentSetup .ffj-club-scope.hidden{display:none}
+#ffjTournamentSetup .ffj-club-scope .ffj-tournament-type-options{margin-top:0}
+#ffjTournamentSetup .ffj-tournament-subhead strong{font-size:13px}
+#ffjTournamentSetup .ffj-tournament-subhead span{font-size:11px}
+#ffjTournamentSetup .ffj-team-picker{
+  grid-template-columns:48px minmax(0,1fr);
+  gap:12px;
+  margin-top:10px;
+  padding:9px 12px;
+}
+#ffjTournamentSetup .ffj-team-select-badge{width:48px;height:48px}
+#ffjTournamentSetup .ffj-team-select-badge .ffj-club-badge{
+  width:44px;height:44px;
+  border-radius:50%;
+  clip-path:none;
+  background:linear-gradient(180deg,#164e78,#0b3558);
+  font-size:12px;
+  border:2px solid #fff;
+  box-shadow:0 0 0 2px #a9c9e2,0 5px 12px rgba(16,55,84,.16);
+  filter:none;
+}
+#ffjTournamentSetup .ffj-team-select-badge img{width:40px;height:27px}
+#ffjTournamentSetup .ffj-size-options{margin-top:10px}
+#ffjTournamentSetup .ffj-size-option{min-height:61px}
+#ffjTournamentSetup .ffj-size-option strong{font-size:21px}
+#ffjTournamentSetup .ffj-size-option span{font-size:11px}
+#ffjTournamentSetup .ffj-tournament-setup-actions{margin-top:12px}
+#ffjTournamentSetup .ffj-secondary-action,
+#ffjTournamentSetup .ffj-primary-action{min-height:43px}
+#ffjTournamentSetup .ffj-tournament-setup-side{
+  position:relative;
+  overflow:hidden;
+  justify-content:flex-end;
+  min-width:0;
+  padding:0;
+  border-left:1px solid rgba(133,176,210,.35);
+  color:#fff;
+  background:
+    radial-gradient(circle at 50% 12%,rgba(97,181,255,.55),transparent 28%),
+    linear-gradient(180deg,#0e5c9d 0%,#073b6c 48%,#06264a 100%);
+}
+#ffjTournamentSetup .ffj-tournament-setup-side:before{
+  content:"";
+  position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 12% 15%,rgba(255,255,255,.75) 0 2px,transparent 3px),
+    radial-gradient(circle at 88% 18%,rgba(255,255,255,.75) 0 2px,transparent 3px),
+    linear-gradient(180deg,transparent 0 64%,rgba(1,20,42,.34) 100%);
+  pointer-events:none;
+}
+.ffj-tournament-hero{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+}
+.ffj-stadium-lights{
+  position:absolute;
+  top:30px;
+  width:180px;height:80px;
+  background:radial-gradient(ellipse at center,rgba(255,255,255,.95) 0 5%,rgba(181,224,255,.35) 18%,transparent 68%);
+  filter:blur(.2px);
+}
+.ffj-stadium-lights-left{left:-20px;transform:rotate(-12deg)}
+.ffj-stadium-lights-right{right:-20px;transform:rotate(12deg)}
+.ffj-hero-trophy{
+  position:absolute;
+  left:50%;top:8%;
+  width:min(42vw,390px);
+  transform:translateX(-50%);
+  filter:drop-shadow(0 28px 30px rgba(0,8,24,.4));
+  z-index:3;
+}
+.ffj-hero-trophy svg{display:block;width:100%;height:auto}
+.ffj-hero-pitch{
+  position:absolute;
+  left:-8%;right:-8%;bottom:-3%;
+  height:39%;
+  transform:perspective(500px) rotateX(58deg);
+  transform-origin:bottom center;
+  background:
+    linear-gradient(90deg,transparent 49.7%,rgba(255,255,255,.7) 49.8% 50.2%,transparent 50.3%),
+    radial-gradient(ellipse at 50% 28%,transparent 0 16%,rgba(255,255,255,.55) 16.3% 16.8%,transparent 17.1%),
+    repeating-linear-gradient(90deg,rgba(41,139,91,.95) 0 90px,rgba(31,117,79,.95) 90px 180px);
+  border-top:1px solid rgba(255,255,255,.4);
+  box-shadow:0 -20px 60px rgba(10,122,80,.26);
+  z-index:1;
+}
+.ffj-hero-bracket{
+  position:absolute;
+  top:17%;
+  bottom:35%;
+  width:22%;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-around;
+  z-index:4;
+}
+.ffj-hero-bracket-left{left:7%;align-items:flex-start}
+.ffj-hero-bracket-right{right:7%;align-items:flex-end}
+.ffj-hero-team-badge{
+  position:relative;
+  width:58px;height:58px;
+  display:grid;place-items:center;
+  border-radius:16px;
+  border:1px solid rgba(164,216,255,.65);
+  background:linear-gradient(180deg,rgba(52,135,205,.78),rgba(12,67,117,.78));
+  box-shadow:0 7px 20px rgba(0,19,47,.28),inset 0 0 18px rgba(153,217,255,.18);
+  color:#fff;
+  font-size:18px;
+  font-weight:950;
+}
+.ffj-hero-team-badge:after{
+  content:"";
+  position:absolute;
+  top:50%;
+  width:54px;height:1px;
+  background:linear-gradient(90deg,#9ad7ff,#55b6ff);
+  box-shadow:0 0 8px rgba(84,184,255,.8);
+}
+.ffj-hero-bracket-left .ffj-hero-team-badge:after{left:100%}
+.ffj-hero-bracket-right .ffj-hero-team-badge:after{right:100%}
+.ffj-tournament-side-copy{
+  position:relative;
+  z-index:6;
+  width:100%;
+  padding:0 46px 42px;
+  text-align:center;
+  text-shadow:0 2px 16px rgba(0,18,45,.5);
+}
+#ffjTournamentSetup .ffj-tournament-side-copy>strong{
+  display:block;
+  margin:0;
+  color:#fff;
+  font-size:clamp(34px,3vw,54px);
+  line-height:1;
+  letter-spacing:-1.4px;
+}
+#ffjTournamentSetup .ffj-tournament-side-copy>p{
+  max-width:500px;
+  margin:13px auto 0;
+  color:#dbeeff;
+  font-size:14px;
+  line-height:1.5;
+}
+#ffjTournamentSetup .ffj-tournament-path-preview{
+  justify-content:center;
+  margin-top:22px;
+  color:#cce8ff;
+}
+#ffjTournamentSetup .ffj-tournament-path-preview i{background:#6fc4ff}
+#ffjTournamentSetup .ffj-tournament-path-preview i:after{border-left-color:#6fc4ff}
+@media(max-height:860px) and (min-width:1051px){
+  #ffjTournamentSetup .ffj-tournament-setup-main{padding-top:15px;padding-bottom:15px}
+  #ffjTournamentSetup .ffj-tournament-setup-inner h1{font-size:44px}
+  #ffjTournamentSetup .ffj-tournament-intro{margin-bottom:10px;font-size:14px}
+  #ffjTournamentSetup .ffj-tournament-field{margin-top:8px;padding:10px 14px}
+  #ffjTournamentSetup .ffj-tournament-type-option{min-height:36px}
+  #ffjTournamentSetup .ffj-club-scope{margin-top:8px;padding-top:8px}
+  #ffjTournamentSetup .ffj-team-picker{margin-top:7px;padding:6px 10px}
+  #ffjTournamentSetup .ffj-team-select-badge{width:42px;height:42px}
+  #ffjTournamentSetup .ffj-team-select-badge .ffj-club-badge{width:38px;height:38px}
+  #ffjTournamentSetup .ffj-size-option{min-height:52px}
+  #ffjTournamentSetup .ffj-tournament-setup-actions{margin-top:8px}
+  #ffjTournamentSetup .ffj-secondary-action,#ffjTournamentSetup .ffj-primary-action{min-height:38px}
+  .ffj-tournament-side-copy{padding-bottom:24px}
+}
+
 </style>
 </head>
 <body class="ffj-pre-game">
