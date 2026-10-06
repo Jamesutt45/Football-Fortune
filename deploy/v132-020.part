@@ -789,6 +789,7 @@
     div.dataset.side=side;
     div.dataset.round=String(roundIndex);
     div.style.gridColumn=String(colIndex);
+    div.style.gridRow='1';
     div.innerHTML='<div class="ffj-bracket-round-title">'+round.name+'</div><div class="ffj-bracket-match-stack"></div>';
     const stack=div.querySelector('.ffj-bracket-match-stack');
     const slotCount=Math.max(1,entries.length);
@@ -1040,6 +1041,7 @@
     const finalCol=document.createElement('div');
     finalCol.className='ffj-bracket-round ffj-bracket-final';
     finalCol.style.gridColumn=String(sideRounds+1);
+    finalCol.style.gridRow='1';
     finalCol.dataset.side='final';
     finalCol.dataset.round=String(rounds.length-1);
     const finalUserFixture=!final.winner&&tournamentState.currentRound===rounds.length-1&&final.home&&final.away&&(final.home.name===tournamentState.userCountry||final.away.name===tournamentState.userCountry);
