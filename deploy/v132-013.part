@@ -333,7 +333,7 @@ UjBUQlMkfB5fMVIYovctBYiXhyrvbDZrw5t08MUxbyX1BWqga3t9Ig87GAiMgPBOvCjD0M/SGukaS+yH
     <section class="ffj-tournament-panel active" id="ffjTournamentBracketPanel">
       <div class="ffj-tournament-summary">
         <div>
-          <div class="ffj-tournament-kicker">FORTUNE NATIONS CUP</div>
+          <div class="ffj-tournament-kicker" id="ffjTournamentKicker">FORTUNE NATIONS CUP</div>
           <h1 id="ffjTournamentHeading">Tournament draw</h1>
           <p id="ffjTournamentSummaryText">Your route to the final.</p>
         </div>
